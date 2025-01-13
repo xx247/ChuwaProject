@@ -3,7 +3,6 @@ router = express.Router();
 const Product = require('../models/Product');
 
 const createProduct = async (req, res) => {
-    console.log(req.body);
     try {
         const product = new Product(req.body);
         await product.save();

@@ -16,7 +16,7 @@ function CreateAProduct() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3001/createProduct", {
+    fetch("/createProduct", {
       method: 'POST',
       body: JSON.stringify(inputs),
       headers: {
