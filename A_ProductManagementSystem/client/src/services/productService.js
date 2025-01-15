@@ -43,3 +43,8 @@ export async function editProduct(inputs, id) {
     },
   })
 }
+
+export async function getProduct(id) {
+  const resp = await fetch("http://localhost:3001/getProduct/" + id);
+  return resp.json();
+}

@@ -10,9 +10,14 @@
     margin-bottom: 20px;
 }
 
-.createProductFormInput input, textarea, .createProductFormInputs input {
+.createProductFormInput input, .createProductFormInputs input {
     width: 100%;
     height: 1.5em;
+}
+
+.createProductFormInput textarea {
+    width: 100%;
+    height: 80px;
 }
 
 .createProductFormInputs label, input {

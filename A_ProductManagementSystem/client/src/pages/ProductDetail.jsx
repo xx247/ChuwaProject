@@ -1,20 +1,18 @@
 import { useParams } from 'react-router';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import './ProductDetail.css';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { loadProduct } from '../store/slices/productSlice';
 
 function ProductDetail() {
   const product_id = useParams().id;
-  const [product, setProduct] = useState({});
+  const product = useSelector((state) => state.product.product);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch("http://localhost:3001/getProduct/" + product_id)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-      setProduct(data);
-    });
+    dispatch(loadProduct(product_id));
   }, []);
 
   const editProduct = () => {
