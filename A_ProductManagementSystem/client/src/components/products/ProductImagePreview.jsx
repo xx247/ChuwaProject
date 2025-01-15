@@ -5,8 +5,8 @@ function ProductImagePreview({ link, showImage }) {
     return (
         link && showImage
         ? 
-        (<div className='productImagePreview'>
-            <img src={link}/>
+        (<div>
+            <img src={link} className='productImagePreview'/>
         </div>) 
         :
         (<div className='productImagePreviewHolder'>

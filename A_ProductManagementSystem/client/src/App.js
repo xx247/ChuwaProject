@@ -6,7 +6,9 @@ import Footer from "./components/layout/Footer";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import ProductList from "./pages/ProductList";
-import CreateAProduct from "./pages/CreateAProduct";
+import ProductDetail from "./pages/ProductDetail";
+import EditProduct from "./pages/EditProduct";
+import CreateProduct from "./pages/CreateProduct";
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/products" element={<ProductList />} />
-          <Route path="/create/product" element={<CreateAProduct />} />
+          <Route path="/create/product" element={<CreateProduct />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/products/edit/:id" element={<EditProduct />} />
           {/* Add more routes as you build out pages */}
         </Routes>
       </main>

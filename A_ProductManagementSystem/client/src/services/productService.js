@@ -23,3 +23,23 @@ export async function getProducts() {
     },
   ];
 }
+
+export async function createProduct(inputs) {
+  fetch("http://localhost:3001/createProduct", {
+    method: 'POST',
+    body: JSON.stringify(inputs),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+}
+
+export async function editProduct(inputs, id) {
+  fetch("http://localhost:3001/editProduct/" + id, {
+    method: 'POST',
+    body: JSON.stringify(inputs),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+}

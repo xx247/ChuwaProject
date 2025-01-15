@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './CreateAProduct.css';
-import ProductImagePreview from '../components/products/ProductImagePreview';
+import ProductImagePreview from './ProductImagePreview';
+import { createProduct, editProduct } from '../../services/productService';
 import { useNavigate } from 'react-router-dom';
 
-function CreateAProduct() {
-  const [inputs, setInputs] = useState({});
+function CreateAProduct({ input }) {
+  const [inputs, setInputs] = useState(input);
   const [showImage, setShowImage] = useState(false);
   const navigate = useNavigate();
 
@@ -14,28 +15,30 @@ function CreateAProduct() {
     setInputs(values => ({...values, [name]: value}))
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    fetch("/createProduct", {
-      method: 'POST',
-      body: JSON.stringify(inputs),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(res => res.json())
-    .then(data => {
-      navigate("/products");
-    });
+    if (input.category) {
+      await editProduct(inputs, input._id);
+    } else {
+      await createProduct(inputs);
+    }
+    navigate('/products');
   }
 
-  const handleImageUpload = () => {
+  const handleImageUpload = (event) => {
+    event.preventDefault();
     setShowImage(prev => !prev);
   }
 
+  useEffect(() => {
+    Object.keys(input).map(function(keyName) {
+      setInputs(inputs => ({...inputs, [keyName]: input[keyName]}));
+    })
+  }, [input]);
+
   return (
     <div className='createProductForm'>
-      <div className='createProductFormTitle'>Create Product</div>
+      <div className='createProductFormTitle'>{input.category ? `Edit ` : `Create ` } Product</div>
       <form onSubmit={handleSubmit}>
         <div className='createProductFormInput'>
           <label>Product name
@@ -92,10 +95,10 @@ function CreateAProduct() {
               onChange={handleChange}
             />
           </label>
-          <button className='createProductFormButton' onClick={handleImageUpload}>Upload</button>
+          <button className='createProductFormButton' onClick={handleImageUpload}>Preview</button>
         </div>
         <ProductImagePreview link={inputs.link} showImage={showImage} />
-        <button type='submit' className='createProductFormButton'>Add Product</button>
+        <button type='submit' className='createProductFormButton'>{input.category ? `Edit ` : `Add ` } Product</button>
       </form>
     </div>
   )
