@@ -13,13 +13,13 @@ const Header = () => {
   return (
     <header
       style={{
-        width: "100%",
         background: "#111",
         color: "#fff",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "1rem",
+        padding: "0px 20px",
+
       }}
     >
       <div>

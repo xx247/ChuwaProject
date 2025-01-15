@@ -3,19 +3,17 @@ function Footer() {
   return (
     <footer
       style={{
-        position: "fixed",
+        // position: "fixed",
         bottom: "0",
         left: "0",
-        width: "100%",
-        height: "60px",    /* or whatever height you like */
+        // width: "100%",
+        // height: "60px",    
         background: "#111",
         color:" #fff",
         justifyContent: "space-between",
         alignItems: "center",
         padding: "1rem",
-        textAlign: "center",
-
-        
+        textAlign: "center", 
       }}
     >
       <div>

@@ -18,7 +18,13 @@ const SignInPage = () => {
         }
     };
 
-    return <AuthForm type="signin" onSubmit={handleSignIn} />;
+    return (
+      <div style={{
+        height: "100%",
+      }}>
+        <AuthForm type="signin" onSubmit={handleSignIn} />;
+      </div>
+    )
 };
 
 export default SignInPage;

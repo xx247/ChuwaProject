@@ -18,7 +18,7 @@ const AuthForm = ({ type, onSubmit }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100vh',
+                height: '100%',
                 background: '#f4f4f4',
             }}
         >
