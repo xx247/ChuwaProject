@@ -31,6 +31,7 @@ const ProductList = () => {
   };
 
   return (
+    
     <div>
       <h1>Products</h1>
       {/* <button onClick={() => setCartOpen(true)}>View Cart</button> */}

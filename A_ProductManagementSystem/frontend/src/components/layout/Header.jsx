@@ -1,11 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { logout } from '../../redux/authSlice';
 import Cart from "../../pages/cart";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+        dispatch(logout()); // Clear token from Redux and localStorage
+        navigate('/signin'); // Redirect to the Sign In page
+  };
+
   const handleCartToggle = () => {
     setIsCartOpen((prev) => !prev);
   };
@@ -19,12 +29,12 @@ const Header = () => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "0px 20px",
-
+        height: "76px"
       }}
     >
       <div>
-        <Link to="/" style={{ color: "#fff", textDecoration: "none" }}>
-          <h2>Management Chuwa</h2>
+        <Link to="/" style={{ color: "#fff", textDecoration: "none"}}>
+          <h2 style={{ fontsize: "48px"}}>Management Chuwa</h2>
         </Link>
       </div>
 
@@ -35,9 +45,16 @@ const Header = () => {
           gap: "1rem" 
         }}
       >
-        <Link to="/signin" style={{ color: "#fff", textDecoration: "none" ,whiteSpace: "nowrap"}}>
-          Sign In
-        </Link>
+        {location.pathname === "/ProductList" ? (
+          <p onClick={handleLogout} style={{ color: "#fff", textDecoration: "none" ,whiteSpace: "nowrap"}}>
+            Logout
+          </p>
+        ) : (
+          <Link to="/signin" style={{ color: "#fff", textDecoration: "none" ,whiteSpace: "nowrap"}}>
+            Sign In
+          </Link>
+        )}
+       
 
         <button
           onClick={handleCartToggle}

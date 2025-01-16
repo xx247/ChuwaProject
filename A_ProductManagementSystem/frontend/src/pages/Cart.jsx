@@ -53,7 +53,7 @@ const Cart = ({ isOpen }) => {
     top: "76px",
     right: isOpen ? "0" : "-340px",
     width: "300px",
-    // height: "calc(100vh - 176px)",
+    //height: "calc(100vh - 156px)",
     height: "500px",
     backgroundColor: "#fff",
     color: "#000",

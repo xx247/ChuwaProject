@@ -7,7 +7,9 @@ import Footer from "./components/layout/Footer";
 import Home from "./pages/Home";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
+import Password from "./pages/Password";
 import ProductList from "./pages/ProductList";
+import EmailSent from "./pages/EmailSent";
 import Cart from "./pages/cart";
 import "./App.css";
 function App() {
@@ -19,6 +21,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/password" element={<Password />} />
+          <Route path="/emailsent" element={<EmailSent />} />
           <Route path="/ProductList" element={<ProductList />} />
           {/* <Route path="/cart" element={<Cart />} /> */}
         </Routes>

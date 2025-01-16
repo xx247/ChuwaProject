@@ -1,4 +1,4 @@
-// src/pages/SignInPage.jsx
+
 import React from 'react';
 import AuthForm from '../components/AuthForm';
 import { signIn } from '../services/authService';
@@ -19,12 +19,14 @@ const SignInPage = () => {
     };
 
     return (
+      
       <div style={{
-        height: "100%",
+        height: "90%",
       }}>
-        <AuthForm type="signin" onSubmit={handleSignIn} />;
+        <AuthForm type="signin" onSubmit={navigate('/ProductList')} />;
 
       </div>
+      
     )
 };
 

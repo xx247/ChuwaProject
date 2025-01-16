@@ -2,10 +2,12 @@ import React from "react";
 
 function Home() {
   return (
-    <div>
-      <h1>Welcome to product Management Chuwa</h1>
-      <p>This is the homepage. Use the navigation above to explore.</p>
-    </div>
+    
+      <div>
+        <h1>Welcome to product Management Chuwa</h1>
+        <p style={{ fontSize: "24px" }}>Please sign in.</p>
+      </div>
+    
   );
 }
 

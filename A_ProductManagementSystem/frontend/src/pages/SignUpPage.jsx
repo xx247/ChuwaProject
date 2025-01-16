@@ -19,12 +19,14 @@ const SignUpPage = () => {
     };
 
     return (
+      
       <div style={{
-        height: "100%",
+        height: "90%",
       }}>
         <AuthForm type="signup" onSubmit={handleSignUp} />;
 
       </div>
+      
     )
 };
 

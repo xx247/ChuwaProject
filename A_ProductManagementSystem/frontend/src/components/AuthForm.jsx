@@ -35,7 +35,12 @@ const AuthForm = ({ type, onSubmit }) => {
                 textAlign: 'center'
                 }}    
                 className="auth-container">
-                <h2>{type === 'signin' ? 'Sign In' : 'Sign Up'}</h2>
+                <h2>{type === 'signin' ? 'Sign In' : type === 'signup'
+                    ? 'Sign Up'
+                    : 'Update your password'}</h2>
+                {type==='password'&&(
+                    <p style={{margin:'0 0 20px'}}>Enter your email link, we will send you the recovery link</p>
+                )}
                 <form onSubmit={handleSubmit}>
                     <input 
                         type="email" 
@@ -45,6 +50,7 @@ const AuthForm = ({ type, onSubmit }) => {
                         onChange={handleChange} 
                         required 
                     />
+                    {type !== 'password' && (
                     <input 
                         type="password" 
                         name="password" 
@@ -53,6 +59,7 @@ const AuthForm = ({ type, onSubmit }) => {
                         onChange={handleChange} 
                         required 
                     />
+                    )}
                     <button
                         style={{
                         backgroundColor: "#9870ef", 
@@ -60,20 +67,26 @@ const AuthForm = ({ type, onSubmit }) => {
                         }}
                         type="submit"
                     >
-                        {type === "signin" ? "Sign In" : "Sign Up"}
+                        {type === 'signin'
+                        ? 'Sign In'
+                        : type === 'signup'
+                        ? 'Sign Up'
+                        : 'Submit'}
                     </button>
+                    {type !== 'password' && (
                     <nav 
                         style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "1px" 
+                        gap: "1px",
                         }}
                     >
                         <p 
                         style={{
                             textAlign: 'left',
-                            color: '#575857de'
-                            }}
+                            color: '#575857de',
+                            margin: "0" 
+                        }}
                         >{type=== "signin" ?"Don't have an account?":"Already have an account."}
                         </p>
                         <Link to={type=== "signin" ?"/signup":"/signin"}
@@ -83,6 +96,32 @@ const AuthForm = ({ type, onSubmit }) => {
                         >{type=== "signin" ?"signup":"signin"}
                         </Link> 
                     </nav>
+                    )}
+                    {type !== 'password' && (
+                    <nav 
+                        style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "1px" 
+                         
+                        }}
+                    >
+                        <p 
+                        style={{
+                            textAlign: 'left',
+                            color: '#575857de',
+                            margin: "0" 
+                            }}
+                        >Forgot password?
+                        </p>
+                        <Link to="/password"
+                        style={{
+                            textAlign: 'left'
+                            }}
+                        >change password
+                        </Link> 
+                    </nav>
+                    )}
                     
                 </form>
             </div>
