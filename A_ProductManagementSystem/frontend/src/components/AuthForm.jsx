@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 
 const AuthForm = ({ type, onSubmit }) => {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -52,7 +53,37 @@ const AuthForm = ({ type, onSubmit }) => {
                         onChange={handleChange} 
                         required 
                     />
-                    <button type="submit">{type === 'signin' ? 'Sign In' : 'Sign Up'}</button>
+                    <button
+                        style={{
+                        backgroundColor: "#9870ef", 
+                        color: "white"
+                        }}
+                        type="submit"
+                    >
+                        {type === "signin" ? "Sign In" : "Sign Up"}
+                    </button>
+                    <nav 
+                        style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "1px" 
+                        }}
+                    >
+                        <p 
+                        style={{
+                            textAlign: 'left',
+                            color: '#575857de'
+                            }}
+                        >{type=== "signin" ?"Don't have an account?":"Already have an account."}
+                        </p>
+                        <Link to={type=== "signin" ?"/signup":"/signin"}
+                        style={{
+                            textAlign: 'left'
+                            }}
+                        >{type=== "signin" ?"signup":"signin"}
+                        </Link> 
+                    </nav>
+                    
                 </form>
             </div>
         </div>

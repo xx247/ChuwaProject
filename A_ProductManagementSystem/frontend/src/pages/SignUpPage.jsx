@@ -1,18 +1,18 @@
 // src/pages/SignInPage.jsx
 import React from 'react';
 import AuthForm from '../components/AuthForm';
-import { signIn } from '../services/authService';
+import { signUp } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 
-const SignInPage = () => {
+const SignUpPage = () => {
     const navigate = useNavigate();
 
-    const handleSignIn = async (formData) => {
+    const handleSignUp = async (formData) => {
         try {
-            const response = await signIn(formData);
+            const response = await signUp(formData);
             localStorage.setItem('token', response.token);
-            alert('Sign in successful');
-            navigate('/ProductList'); // Redirect to products page after sign-in
+            alert('Sign up successful');
+            navigate('/signin'); // Redirect to signin page after signup
         } catch (error) {
             alert(`Sign in failed: ${error.response.data.message}`);
         }
@@ -22,10 +22,10 @@ const SignInPage = () => {
       <div style={{
         height: "100%",
       }}>
-        <AuthForm type="signin" onSubmit={handleSignIn} />;
+        <AuthForm type="signup" onSubmit={handleSignUp} />;
 
       </div>
     )
 };
 
-export default SignInPage;
+export default SignUpPage;
