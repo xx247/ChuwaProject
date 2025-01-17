@@ -25,7 +25,7 @@ function CreateAProduct({ product_id="" }) {
     } else {
       await createProduct(inputs);
     }
-    navigate('/products');
+    navigate('/productList');
   }
 
   const handleImageUpload = (event) => {
