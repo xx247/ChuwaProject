@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { logout } from '../../redux/authSlice';
-import Cart from "../../pages/cart";
+import Cart from "../../pages/Cart";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import { emptycartIteam } from '../../redux//slices/cartSlice';
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const dispatch = useDispatch();
@@ -13,6 +13,8 @@ const Header = () => {
 
   const handleLogout = () => {
         dispatch(logout()); // Clear token from Redux and localStorage
+           dispatch(emptycartIteam());//clear cart
+
         navigate('/signin'); // Redirect to the Sign In page
   };
 
