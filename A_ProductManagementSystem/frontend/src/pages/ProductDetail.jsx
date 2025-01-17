@@ -4,6 +4,7 @@ import './ProductDetail.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadProduct } from '../redux/slices/productSlice';
+import { addToCart } from '../redux/slices/cartSlice';
 
 function ProductDetail() {
   const product_id = useParams().id;
@@ -17,6 +18,10 @@ function ProductDetail() {
 
   const editProduct = () => {
     navigate('/products/edit/' + product_id);
+  }
+
+  const addItemToCart = () => {
+    dispatch(addToCart(product));
   }
 
   return (
@@ -34,7 +39,7 @@ function ProductDetail() {
             <span className='ProductDetailQuantity'>{product.quantity > 0 ? product.quantity + ` items left` : `Out of stock`}</span>
           </div>
           <div className='ProductDetailDescription'>{product.description}</div>
-          <button className='AddCartButton'>Add to cart</button>
+          <button className='AddCartButton' onClick={addItemToCart}>Add to cart</button>
           <button className='EditButton' onClick={editProduct}>Edit</button>
         </div>
       </div>
