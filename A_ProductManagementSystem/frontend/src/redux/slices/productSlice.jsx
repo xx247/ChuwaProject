@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getProduct } from "../../services/productService";
+import { getProduct, loadAllProducts } from "../../services/productService";
 
 export const loadProduct = createAsyncThunk(
   'product/loadProduct',
@@ -13,11 +13,20 @@ export const loadProduct = createAsyncThunk(
   }
 );
 
+export const loadProducts = createAsyncThunk(
+  'product/loadProducts',
+  async () => {
+    const data = await loadAllProducts();
+    return data;
+  }
+);
+
 export const productSlice = createSlice({
     name: 'product',
     initialState: {
       product: {},
       showProductImage: false,
+      products: [],
     },
     reducers: {
       toggleImage: (state, action) => {
@@ -31,6 +40,9 @@ export const productSlice = createSlice({
       builder
         .addCase(loadProduct.fulfilled, (state, action) => {
           state.product = action.payload;
+        })
+        .addCase(loadProducts.fulfilled, (state, action) => {
+          state.products = action.payload;
         })
     },
   })

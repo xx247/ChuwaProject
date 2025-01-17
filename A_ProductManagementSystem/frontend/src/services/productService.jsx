@@ -35,3 +35,8 @@ export async function getProduct(id) {
   const resp = await fetch("/getProduct/" + id);
   return resp.json();
 }
+
+export async function loadAllProducts() {
+  const resp = await fetch("/getProducts");
+  return resp.json();
+}
