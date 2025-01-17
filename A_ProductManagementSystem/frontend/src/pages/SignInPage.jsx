@@ -23,7 +23,7 @@ const SignInPage = () => {
       <div style={{
         height: "90%",
       }}>
-        <AuthForm type="signin" onSubmit={navigate('/ProductList')} />;
+        <AuthForm type="signin" onSubmit={handleSignIn} />;
 
       </div>
       
