@@ -12,7 +12,7 @@ export function getProducts() {
 // }
 
 export async function createProduct(inputs) {
-  fetch("http://localhost:3001/createProduct", {
+  fetch("/createProduct", {
     method: 'POST',
     body: JSON.stringify(inputs),
     headers: {
@@ -22,7 +22,7 @@ export async function createProduct(inputs) {
 }
 
 export async function editProduct(inputs, id) {
-  fetch("http://localhost:3001/editProduct/" + id, {
+  fetch("/editProduct/" + id, {
     method: 'POST',
     body: JSON.stringify(inputs),
     headers: {
@@ -32,6 +32,6 @@ export async function editProduct(inputs, id) {
 }
 
 export async function getProduct(id) {
-  const resp = await fetch("http://localhost:3001/getProduct/" + id);
+  const resp = await fetch("/getProduct/" + id);
   return resp.json();
 }
