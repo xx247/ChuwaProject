@@ -13,6 +13,8 @@ const Header = () => {
 
   const handleLogout = () => {
         dispatch(logout()); // Clear token from Redux and localStorage
+           dispatch(emptycartIteam());//clear cart
+
         navigate('/signin'); // Redirect to the Sign In page
   };
 
