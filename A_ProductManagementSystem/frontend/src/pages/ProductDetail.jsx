@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import './ProductDetail.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadProduct } from '../store/slices/productSlice';
+import { loadProduct } from '../redux/slices/productSlice';
 
 function ProductDetail() {
   const product_id = useParams().id;
