@@ -11,6 +11,9 @@ import Password from "./pages/Password";
 import ProductList from "./pages/ProductList";
 import EmailSent from "./pages/EmailSent";
 import Cart from "./pages/cart";
+import ProductDetail from "./pages/ProductDetail";
+import EditProduct from "./pages/EditProduct";
+import CreateProduct from "./pages/CreateProduct";
 import "./App.css";
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
           <Route path="/password" element={<Password />} />
           <Route path="/emailsent" element={<EmailSent />} />
           <Route path="/ProductList" element={<ProductList />} />
+          <Route path="/create/product" element={<CreateProduct />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
+          <Route path="/products/edit/:id" element={<EditProduct />} />
           {/* <Route path="/cart" element={<Cart />} /> */}
         </Routes>
       </main>
