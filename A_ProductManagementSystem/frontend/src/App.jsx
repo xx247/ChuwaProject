@@ -14,7 +14,9 @@ import EmailSent from "./pages/EmailSent";
 import ProductDetail from "./pages/ProductDetail";
 import EditProduct from "./pages/EditProduct";
 import CreateProduct from "./pages/CreateProduct";
+import ProtectedRoute from './components/ProtectedRoute';
 import "./App.css";
+
 function App() {
   return (
     <>
@@ -26,7 +28,11 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/password" element={<Password />} />
           <Route path="/emailsent" element={<EmailSent />} />
-          <Route path="/ProductList/:curPage?" element={<ProductList />} />
+          <Route path="/ProductList/:curPage?" element={
+            <ProtectedRoute>
+              <ProductList />
+            </ProtectedRoute>
+            } />
           <Route path="/create/product" element={<CreateProduct />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/products/edit/:id" element={<EditProduct />} />
