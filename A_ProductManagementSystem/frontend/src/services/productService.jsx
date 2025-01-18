@@ -36,7 +36,7 @@ export async function getProduct(id) {
   return resp.json();
 }
 
-export async function loadAllProducts() {
-  const resp = await fetch("/getProducts");
+export async function loadAllProducts(perPage, curPage) {
+  const resp = await fetch("/getProducts/" + perPage + "/" + curPage);
   return resp.json();
 }

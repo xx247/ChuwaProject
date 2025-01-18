@@ -24,8 +24,12 @@ const getProductById = async (req, res) => {
 
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
-        res.status(200).json(products);
+        const perPage = req.params.perPage;
+        const curPage = req.params.curPage;
+        const numProducts = await Product.countDocuments();
+        const products = await Product.find({}).limit(perPage).skip(curPage * perPage);
+        console.log(perPage, curPage);
+        res.status(200).json({numProducts: numProducts, products: products});
     } catch (err) {
         res.status(500).json({ message: err });
     }
@@ -49,7 +53,7 @@ const editProductById = async (req, res) => {
 };
 
 router.post('/createProduct', createProduct);
-router.get('/getProducts', getProducts);
+router.get('/getProducts/:perPage/:curPage', getProducts);
 router.get('/getProduct/:id', getProductById);
 router.post('/editProduct/:id', editProductById);
 

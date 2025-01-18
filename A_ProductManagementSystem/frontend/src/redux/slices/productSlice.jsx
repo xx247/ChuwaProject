@@ -15,8 +15,8 @@ export const loadProduct = createAsyncThunk(
 
 export const loadProducts = createAsyncThunk(
   'product/loadProducts',
-  async () => {
-    const data = await loadAllProducts();
+  async (payload) => {
+    const data = await loadAllProducts(payload.perPage, payload.curPage);
     return data;
   }
 );
@@ -27,6 +27,7 @@ export const productSlice = createSlice({
       product: {},
       showProductImage: false,
       products: [],
+      totalCount: 0,
     },
     reducers: {
       toggleImage: (state, action) => {
@@ -42,7 +43,8 @@ export const productSlice = createSlice({
           state.product = action.payload;
         })
         .addCase(loadProducts.fulfilled, (state, action) => {
-          state.products = action.payload;
+          state.products = action.payload.products;
+          state.totalCount = action.payload.numProducts;
         })
     },
   })
