@@ -28,7 +28,6 @@ const getProducts = async (req, res) => {
         const curPage = req.params.curPage;
         const numProducts = await Product.countDocuments();
         const products = await Product.find({}).limit(perPage).skip(curPage * perPage);
-        console.log(perPage, curPage);
         res.status(200).json({numProducts: numProducts, products: products});
     } catch (err) {
         res.status(500).json({ message: err });
