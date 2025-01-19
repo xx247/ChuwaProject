@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['employee', 'HR'], default: 'user' },
   createdAt: { type: Date, default: Date.now },
+  reviewStatus: { type: String, enum: ['Pending', 'Rejected', 'Approved', 'Missing Onboarding Reviews'], default: 'Missing Onboarding Reviews' },
+  reviewFeedback: { type: String },
 });
 
 // Hash password before saving
