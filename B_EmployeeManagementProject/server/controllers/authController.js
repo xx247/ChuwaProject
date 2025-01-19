@@ -9,9 +9,9 @@ const generateToken = (user) => {
 };
 
 const signup = async (req, res) => {
+  console.log(req.body);
   try {
     const { username, email, password, role } = req.body;
-
     if (await User.findOne({ email })) {
       return res.status(400).json({ message: 'Email already exists' });
     }
