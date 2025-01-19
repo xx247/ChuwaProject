@@ -6,9 +6,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['Employee', 'HR'], default: 'user' },
+  onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
-  documents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }],
   createdAt: { type: Date, default: Date.now },
+  
 });
 
 // Hash password before saving
