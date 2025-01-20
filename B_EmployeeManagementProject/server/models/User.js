@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['Employee', 'HR'], default: 'user' },
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
+  visaStatus: {
+    optReceipt: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
+    optEAD: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
+    i983: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
+    i20: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
