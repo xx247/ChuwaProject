@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
   createdAt: { type: Date, default: Date.now },
-  
 });
 
 // Hash password before saving
