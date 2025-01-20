@@ -3,6 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/application');
+const documentRoutes = require('./routes/document');
 
 const app = express();
 
@@ -14,6 +15,7 @@ connectDB();
 // Routes
 app.use('/', authRoutes);
 app.use('/application', applicationRoutes);
+app.use('/document', documentRoutes);
 
 
 //Start server
