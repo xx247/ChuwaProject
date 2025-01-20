@@ -6,11 +6,14 @@ const getEmployeeProfiles = async (req, res) => {
   try {
     const PersonalInfos = await PersonalInfo.find({});
     const employeeProfiles = PersonalInfos.map((employeeProfile) => {
-      return {id: employeeProfile._id, name: employeeProfile.firstName + " " + employeeProfile.lastName, preferredName: employeeProfile.preferredName,
-        SSN: employeeProfile.ssn, authorization: employeeProfile.employmentDetails.visaStatus,
-      phone: employeeProfile.contactInfo.cellPhone, email: employeeProfile.email};
+      return {profile_id: employeeProfile._id, firstName: employeeProfile.firstName, lastName: employeeProfile.lastName, preferredName: employeeProfile.preferredName,
+        SSN: employeeProfile.ssn, authorization: employeeProfile.workAuthorization.visaTitle,
+      phone: employeeProfile.cellPhone, email: employeeProfile.email};
     });
-    res.status(200).json(employeeProfiles);
+    const employeeProfilesSorted = employeeProfiles.sort(function(e1, e2) {
+      return e1.lastName.localeCompare(e2.lastName);
+    });
+    res.status(200).json(employeeProfilesSorted);
   } catch (err) {
     res.status(500).json({ message: err });
   }

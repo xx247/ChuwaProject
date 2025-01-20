@@ -1,4 +1,4 @@
-import './EmployeeProfile.css';
+import './HiringManagement.css';
 
 function HiringManagement() {
 

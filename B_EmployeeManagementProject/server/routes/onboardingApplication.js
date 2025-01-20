@@ -3,15 +3,17 @@ const router = express.Router()
 const PersonalInfo = require('../models/PersonalInfo');
 const User = require('../models/User');
 const Document = require('../models/Document');
+const Application = require('../models/Application');
 
 const getOnboardingApplications = async (req, res) => {
   try {
     const status = req.params.status;
-    const userProfiles = await User.find({ reviewStatus: status });
-    const applications = userProfiles.map((userProfile) => {
-        return {id: userProfile._id, name: userProfile.name, email: userProfile.email};
+    const applications = await Application.find({ reviewStatus: status });
+    const applicationDetails = applications.map(async (application) => {
+        const userProfile = await User.find({ _id: application.user });
+        return { id: application.user, name: userProfile.name, email: userProfile.email };
     });
-    res.status(200).json(applications);
+    res.status(200).json(applicationDetails);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -21,8 +23,8 @@ const changeOnboardingApplication = async (req, res) => {
   try {
     const id = req.params.id;
     const status = req.body.status;
-    const reviewFeedback = req.body.feedback ? req.body.feedback : "";
-    const onboardingApplication = await User.findOneAndUpdate({ _id: id }, { $set: { reviewStatus: status, reviewFeedback: reviewFeedback }}, { new: true });
+    const reviewFeedback = req.body.feedback || "";
+    const onboardingApplication = await Application.findOneAndUpdate({ _id: id }, { $set: { status: status, feedback: reviewFeedback }}, { new: true });
     res.status(200).json(onboardingApplication);
   } catch (err) {
     res.status(500).json({ message: err });

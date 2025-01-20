@@ -3,12 +3,20 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, default:'username' },
+  username: { type: String, required: true, unique: true, default:'username' },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['employee', 'HR'], default: 'user' },
+  role: { type: String, enum: ['Employee', 'HR'], default: 'user' },
+  onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
+  personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
+  visaStatus: {
+    optReceipt: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+    optEAD: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+    i983: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+    i20: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+  },
   createdAt: { type: Date, default: Date.now },
-  reviewStatus: { type: String, enum: ['Pending', 'Rejected', 'Approved', 'Missing Onboarding Reviews'], default: 'Missing Onboarding Reviews' },
-  reviewFeedback: { type: String },
 });
 
 // Hash password before saving
