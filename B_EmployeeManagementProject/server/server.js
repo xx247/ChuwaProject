@@ -3,7 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/application');
-const documentRoutes = require('./routes/document');
+const documentRoutes = require('./routes/mdbFiles');
 
 const app = express();
 
