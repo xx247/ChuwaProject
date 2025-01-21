@@ -32,7 +32,7 @@ const PersonalInfoSchema = new mongoose.Schema({
     visaTitle: { type: String },
     startDate: { type: Date },
     endDate: { type: Date },
-    files: [{ type: String }], // File paths or URLs
+    //files: [{ type: String }], // File paths or URLs
   },
   reference: {
     firstName: { type: String, required: true },

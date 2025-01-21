@@ -64,7 +64,55 @@ const submitApplication = async (req, res) => {
   }
 };
   
+const getOnboardingStatus = async (req, res) => {
+  try {
+    // Find the user and populate their onboarding application
+    const user = await User.findById(req.user.id).populate('onboardingApplication');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
+    const application = user.onboardingApplication;
+
+    if (!application) {
+      // Case: Never Submitted
+      return res.status(200).json({
+        status: 'NeverSubmitted',
+        message: 'No application has been submitted. Please complete your onboarding application.',
+      });
+    }
+
+    // Handle application status
+    switch (application.status) {
+      case 'Pending':
+        return res.status(200).json({
+          status: 'Pending',
+          message: 'Your application is under review. Please wait for HR feedback.',
+          documents: application.documents, // Return document references
+        });
+
+      case 'Rejected':
+        return res.status(200).json({
+          status: 'Rejected',
+          message: 'Your application was rejected.',
+          feedback: application.feedback,
+          action: 'Please review the feedback and resubmit your application.',
+        });
+
+      case 'Approved':
+        return res.status(200).json({
+          status: 'Approved',
+          message: 'Your application has been approved!',
+          redirectTo: '/home',
+        });
+
+      default:
+        return res.status(400).json({ message: 'Invalid application status.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 // // Download document
 // const downloadDocument = async (req, res) => {
 //   const { fileName } = req.params;
@@ -78,7 +126,7 @@ const submitApplication = async (req, res) => {
 // };
 
 module.exports = {
-  // getOnboardingStatus,
+  getOnboardingStatus,
   submitApplication,
 //   downloadDocument,
 };
