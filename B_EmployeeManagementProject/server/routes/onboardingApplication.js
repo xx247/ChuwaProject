@@ -8,11 +8,11 @@ const Application = require('../models/Application');
 const getOnboardingApplications = async (req, res) => {
   try {
     const status = req.params.status;
-    const applications = await Application.find({ reviewStatus: status });
-    const applicationDetails = applications.map(async (application) => {
-        const userProfile = await User.find({ _id: application.user });
-        return { id: application.user, name: userProfile.name, email: userProfile.email };
-    });
+    const applications = await Application.find({ status: status });
+    const applicationDetails = await Promise.all(applications.map(async (application) => {
+        const userProfile = await User.findOne({ _id: '678c66dc13cd84d4c8659e80' });
+        return { id: '678c66dc13cd84d4c8659e80', name: userProfile.name, email: userProfile.email };
+    }));
     res.status(200).json(applicationDetails);
   } catch (err) {
     res.status(500).json({ message: err });
@@ -34,14 +34,16 @@ const changeOnboardingApplication = async (req, res) => {
 const getFullOnboardingApplicationForReview = async (req, res) => {
   try {
     const id = req.params.id;
-    const userProfile = await User.find({ _id: id});
+    const userProfile = await User.findOne({ _id: id});
     const personalInfoId = userProfile.personalInfo;
+    const onboardingApplicationId = userProfile.onboardingApplication;
     const documentsIds = userProfile.documents;
-    const personalInfo = await PersonalInfo.find({ _id: personalInfoId });
-    const documents = documentsIds.map(async (documentId) => {
-      return await Document.find({ _id: documentId});
-    })
-    res.status(200).json({ personalInfo: personalInfo, documents: documents });
+    const personalInfo = await PersonalInfo.findOne({ _id: personalInfoId });
+    const onboardingApplication = await Application.findOne({ _id: onboardingApplicationId });
+    // const documents = Promise.all(documentsIds.map(async (documentId) => {
+    //   return await Document.find({ _id: documentId});
+    // }));
+    res.status(200).json({ personalInfo: personalInfo, documents: [], onboardingApplication: onboardingApplication });
   } catch (err) {
     res.status(500).json({ message: err });
   }

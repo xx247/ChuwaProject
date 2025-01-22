@@ -7,7 +7,7 @@ const getEmailRegistrationLink = async (req, res) => {
   try {
     const name = req.params.name;
     const email = req.params.email;
-    const token = crypto.randomBytes(64).toString('hex');
+    const token = crypto.randomBytes(10).toString('hex');
     const resp = await EmailRegistration.findOne({ 'email': email });
     const dateNow = new Date();
     const validUntil = dateNow.setHours(dateNow.getHours() + 3);
@@ -15,6 +15,7 @@ const getEmailRegistrationLink = async (req, res) => {
     if (!resp) {
       const emailRegistration = new EmailRegistration({ name: name, email: email, link: token, validUntil: validUntil, registered: false });
       await emailRegistration.save();
+      // send email
       res.status(200).json(emailRegistration);
     } else {
       res.status(400).json({ message: "email already exists" });

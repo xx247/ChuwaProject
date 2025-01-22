@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['employee', 'HR'], default: 'user' },
-  role: { type: String, enum: ['Employee', 'HR'], default: 'user' },
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
   visaStatus: {
@@ -15,6 +14,7 @@ const userSchema = new mongoose.Schema({
     optEAD: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
     i983: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
     i20: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+    other: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
   },
   createdAt: { type: Date, default: Date.now },
 });
