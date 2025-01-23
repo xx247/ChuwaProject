@@ -5,10 +5,12 @@ import Registration from "./pages/Employee/Registration";
 import Login from "./pages/Employee/Login";
 import PersonalInfo from "./pages/Employee/PersonalInfo";
 import Navbar from "./components/Navbar";
+import { useSelector } from 'react-redux';
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
-   
+  //const isAuthenticated=true;
+  //const isAuthenticated = !!localStorage.getItem("token");
+  const isAuthenticated = useSelector((state) => state.auth.token);
   // 记得换成用redux才能全局更新
   // 否则如果在其他页面登出会导致这个页面的isAuthenticated不更新
 

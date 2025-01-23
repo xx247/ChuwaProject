@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { replace, useNavigate } from 'react-router-dom';
-import { logIn } from "../../services/authService";
+import { useDispatch } from 'react-redux';
+import { logIn } from '../../services/authService';
+import { login } from '../../redux/slice/authSlice';
 
 import {
   Box,
@@ -13,6 +15,7 @@ import {
 const Login = () => {
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -34,8 +37,9 @@ const Login = () => {
    
       if (response.status === 200) {
         alert('Log in successful!');
-        // Save token to localStorage
-        localStorage.setItem('token', response.data.token);
+
+        dispatch(login(response.data.token));// Update Redux state
+        //localStorage.setItem('token', response.data.token);
         console.log("redirecting to personal info page");
         navigate('/personalInfo', {replace:true});
       } else if (response.status === 400) {

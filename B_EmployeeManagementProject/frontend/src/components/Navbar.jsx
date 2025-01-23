@@ -2,13 +2,17 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/slice/authSlice';
 
 const Navbar = () => {
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    dispatch(logout()); // Clear token from Redux and localStorage
+    navigate('/'); // Redirect to the Sign In page
   };
 
   return (
