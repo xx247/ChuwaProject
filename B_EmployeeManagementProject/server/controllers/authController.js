@@ -9,9 +9,8 @@ const generateToken = (user) => {
 };
 
 const signup = async (req, res) => {
-
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
     if (await User.findOne({ email })) {
       return res.status(400).json({ message: 'Email already exists' });
     }
@@ -19,7 +18,7 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: 'Username already exists' });
     }
 
-    const user = new User({ username, email, password, role });
+    const user = new User({ username, email, password });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
@@ -36,9 +35,10 @@ const login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
-
+    
     const token = generateToken(user);
     res.json({ token, role: user.role });
+
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

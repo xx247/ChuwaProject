@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, default:'username' },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['Employee', 'HR'], default: 'user' },
+  role: { type: String, enum: ['Employee', 'HR'], default: 'Employee' },
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
   visaStatus: {

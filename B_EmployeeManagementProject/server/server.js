@@ -4,10 +4,12 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/application');
 const documentRoutes = require('./routes/mdbFiles');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 //Databse connection
 connectDB();
