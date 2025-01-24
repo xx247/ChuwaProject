@@ -2,11 +2,12 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/slice/authSlice';
 
 const Navbar = () => {
-
+  const user = useSelector((state) => state.auth.user);
+  const role = user ? user.role : null;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -21,15 +22,30 @@ const Navbar = () => {
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Employee Management
         </Typography>
-        <Button color="inherit" onClick={() => navigate("/personal-info")}>
-          Personal Information
-        </Button>
-        <Button color="inherit" onClick={() => navigate("/visa-status")}>
-          Visa Status Management
-        </Button>
-        <Button color="inherit" onClick={handleLogout}>
-          Logout
-        </Button>
+        {
+          role === 'Employee' ? (
+            <>
+            <Button color="inherit" onClick={() => navigate("/personal-info")}>
+              Personal Information
+            </Button>
+            <Button color="inherit" onClick={() => navigate("/visa-status")}>
+              Visa Status Management
+            </Button>
+            </>
+          ) : (
+            <Button color="inherit" onClick={() => navigate("/")}>
+              HR Dashboard
+            </Button>
+          )
+        }
+        {
+          user && (
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
+          )
+        }
+        
       </Toolbar>
     </AppBar>
   );

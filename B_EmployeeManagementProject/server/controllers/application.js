@@ -7,7 +7,7 @@ const PersonalInfo = require('../models/PersonalInfo');
 // Submit onboarding application
 const submitApplication = async (req, res) => {
   const { personalInfo, profilePicture, documents } = req.body; // Accept profile picture and documents as strings
-
+  console.log(req.body);
   try {
     // Find the user
     const user = await User.findById(req.user.id).populate('personalInfo onboardingApplication');

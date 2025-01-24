@@ -37,7 +37,12 @@ const login = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
     
     const token = generateToken(user);
-    res.json({ token, role: user.role });
+    const returnUser = {
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    }
+    res.json({ token, user: returnUser });
 
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

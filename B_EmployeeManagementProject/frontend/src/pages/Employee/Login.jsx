@@ -37,8 +37,9 @@ const Login = () => {
    
       if (response.status === 200) {
         alert('Log in successful!');
+        console.log("========Response from login=========",response);
+        dispatch(login(response.data));// Update Redux state
 
-        dispatch(login(response.data.token));// Update Redux state
         //localStorage.setItem('token', response.data.token);
         console.log("redirecting to personal info page");
         navigate('/personalInfo', {replace:true});

@@ -22,14 +22,9 @@ const PersonalInfoSchema = new mongoose.Schema({
     enum: ["Male", "Female", "I do not wish to answer"],
     required: true,
   },
-  citizenshipStatus: {
-    type: String,
-    // work authorization
-    enum: ["Green Card", "Citizen", "H1-B", "L2", "F1(CPT/OPT)", "H4", "Other"],
-    required: true,
-  },
   workAuthorization: {
     visaTitle: { type: String },
+    citizenType: { type: String },
     startDate: { type: Date },
     endDate: { type: Date },
     //files: [{ type: String }], // File paths or URLs
