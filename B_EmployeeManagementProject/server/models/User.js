@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['Employee', 'HR'], default: 'Employee' },
+  
+  //status of application and document submitted
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
+  //personal information on application
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
   visaStatus: {
     optReceipt: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },

@@ -15,3 +15,12 @@ export const getApplicationStatus = async () => {
         return error.response;
     }
 };
+
+export const submitApplication = async (data) => {
+    try {
+        const response = await axios.post(`${API_URL}/application/submit`, data);
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+};

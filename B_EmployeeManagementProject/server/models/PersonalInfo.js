@@ -42,14 +42,14 @@ const PersonalInfoSchema = new mongoose.Schema({
     email: { type: String },
     relationship: { type: String, required: true },
   },
-  emergencyContacts: {
+  emergencyContacts: [{
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     middleName: { type: String },
     phone: { type: String },
     email: { type: String },
     relationship: { type: String, required: true },
-  },
+  }],
 });
 
 module.exports = mongoose.model("PersonalInfo", PersonalInfoSchema);
