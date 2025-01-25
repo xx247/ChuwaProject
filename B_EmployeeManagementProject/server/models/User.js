@@ -9,8 +9,12 @@ const userSchema = new mongoose.Schema({
   
   //status of application and document submitted
   onboardingApplication: {type: mongoose.Schema.Types.ObjectId, ref: 'Application' },
+  
   //personal information on application
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
+
+  //personal information on information page that can be edited by user
+  userInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'UserInfo' },
   visaStatus: {
     optReceipt: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
     optEAD: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },

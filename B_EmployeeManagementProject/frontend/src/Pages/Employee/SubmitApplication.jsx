@@ -19,9 +19,12 @@ import {
   FormLabel,
 } from "@mui/material";
 import { submitApplication } from "../../services/application";
+import { useNavigate } from "react-router-dom";
 
 const ApplicationForm = () => {
   const user = useSelector((state) => state.auth.user);
+
+  const navigate = useNavigate();
 
   const [workAuthorization, setWorkAuthorization] = useState("");
   const [visaTitle, setVisaTitle] = useState("");
@@ -131,7 +134,6 @@ const ApplicationForm = () => {
     try {
       e.preventDefault();
       const response = await submitApplication(formData);
-      console.log(response);
       if (response.status === 200) {
         alert("Submit successful!");
         navigate("/personalInfo", { replace: true });
@@ -139,6 +141,7 @@ const ApplicationForm = () => {
         alert(`Submit failed: ${response.data.message}`);
       }
     } catch (error) {
+      console.log(error);
       alert("Server error. Please try again later.");
     }
   };
@@ -329,6 +332,7 @@ const ApplicationForm = () => {
             fullWidth
             onChange={(e) => handleChange(e, "personalInfo.gender")}
             value={formData.personalInfo.gender}
+            required
           >
             {genders.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -513,89 +517,95 @@ const ApplicationForm = () => {
       <Button variant="contained" onClick={addEmergencyContact} sx={{ mb: 2 }}>
         Add Emergency Contact
       </Button>
-      {emergencyContacts.map((contact, index) => (
-        <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
-          <Grid item xs={6}>
-            <TextField
-              label="First Name"
-              fullWidth
-              required
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.firstName")
-              }
-              value={formData.personalInfo.reference.firstName}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Last Name"
-              fullWidth
-              required
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.lastName")
-              }
-              value={formData.personalInfo.reference.lastName}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Middle Name"
-              fullWidth
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.middleName")
-              }
-              value={formData.personalInfo.reference.middleName}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Phone"
-              fullWidth
-              required
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.phone")
-              }
-              value={formData.personalInfo.reference.phone}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Email"
-              fullWidth
-              required
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.email")
-              }
-              value={formData.personalInfo.reference.email}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Relationship"
-              fullWidth
-              required
-              onChange={(e) =>
-                handleChange(e, "personalInfo.emergencyContacts.relationship")
-              }
-              value={formData.personalInfo.reference.relationship}
-            />
-          </Grid>
+      {formData.personalInfo.emergencyContacts.map((contact, index) => (
+  <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
+    <Grid item xs={6}>
+      <TextField
+        label="First Name"
+        fullWidth
+        required
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.firstName`)
+        }
+        value={contact.firstName || ""}
+      />
+    </Grid>
+    <Grid item xs={6}>
+      <TextField
+        label="Last Name"
+        fullWidth
+        required
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.lastName`)
+        }
+        value={contact.lastName || ""}
+      />
+    </Grid>
+    <Grid item xs={6}>
+      <TextField
+        label="Middle Name"
+        fullWidth
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.middleName`)
+        }
+        value={contact.middleName || ""}
+      />
+    </Grid>
+    <Grid item xs={6}>
+      <TextField
+        label="Phone"
+        fullWidth
+        required
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.phone`)
+        }
+        value={contact.phone || ""}
+      />
+    </Grid>
+    <Grid item xs={6}>
+      <TextField
+        label="Email"
+        fullWidth
+        required
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.email`)
+        }
+        value={contact.email || ""}
+      />
+    </Grid>
+    <Grid item xs={6}>
+      <TextField
+        label="Relationship"
+        fullWidth
+        required
+        onChange={(e) =>
+          handleChange(e, `personalInfo.emergencyContacts.${index}.relationship`)
+        }
+        value={contact.relationship || ""}
+      />
+    </Grid>
 
-          <Grid item xs={12}>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => {
-                const updatedContacts = [...emergencyContacts];
-                updatedContacts.splice(index, 1); // Remove the contact at the current index
-                setEmergencyContacts(updatedContacts);
-              }}
-            >
-              Remove Contact
-            </Button>
-          </Grid>
-        </Grid>
-      ))}
+    <Grid item xs={12}>
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={() => {
+          const updatedContacts = [...formData.personalInfo.emergencyContacts];
+          updatedContacts.splice(index, 1); // Remove the contact at the current index
+          setFormData((prev) => ({
+            ...prev,
+            personalInfo: {
+              ...prev.personalInfo,
+              emergencyContacts: updatedContacts,
+            },
+          }));
+        }}
+      >
+        Remove Contact
+      </Button>
+    </Grid>
+  </Grid>
+))}
 
       {/*Upload Files */}
       <Typography variant="h6">Upload Documents</Typography>

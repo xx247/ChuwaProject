@@ -5,6 +5,7 @@ import Registration from "./pages/Employee/Registration";
 import Login from "./pages/Employee/Login";
 import PersonalInfo from "./pages/Employee/PersonalInfo";
 import SubmitApplication from "./pages/Employee/SubmitApplication";
+import UserInfo from "./pages/Employee/UserInfo";
 import Navbar from "./components/Navbar";
 import { useSelector } from 'react-redux';
 
@@ -20,19 +21,20 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Registration />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/userInfo" element={<UserInfo />} />
         {
           isAuthenticated ? (
             <Route path="/personalInfo" element={<PersonalInfo />} />
             
           ) : (
-            <Route path="/personalInfo" element={<Navigate to="/login" />} />
+            <Route path="/personalInfo" element={<Navigate to="/" />} />
           )
         }
         {
           isAuthenticated ? (
             <Route path="/submit-application" element={< SubmitApplication/>} />            
           ) : (
-            <Route path="/personalInfo" element={<Navigate to="/login" />} />
+            <Route path="/personalInfo" element={<Navigate to="/" />} />
           )
         }
         {/* <Route path="/personalInfo" element={isAuthenticated ? <PersonalInfo /> : <Navigate to="/login" />} /> */}
