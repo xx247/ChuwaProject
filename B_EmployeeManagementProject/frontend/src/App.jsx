@@ -8,10 +8,10 @@ import SubmitApplication from "./Pages/Employee/SubmitApplication";
 import UserInfo from "./Pages/Employee/UserInfo";
 import Navbar from "./components/Navbar";
 import { useSelector } from 'react-redux';
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   //const isAuthenticated=true;
-  //const isAuthenticated = !!localStorage.getItem("token");
   const isAuthenticated = useSelector((state) => state.auth.token);
 
 
@@ -22,30 +22,31 @@ const App = () => {
         <Route path="/" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         
-        {
-          isAuthenticated ? (
-            <Route path="/personalInfo" element={<PersonalInfo />} />
-            
-          ) : (
-            <Route path="/personalInfo" element={<Navigate to="/" />} />
-          )
-        }
-        {
-          isAuthenticated ? (
-            <Route path="/submit-application" element={< SubmitApplication/>} />            
-          ) : (
-            <Route path="/personalInfo" element={<Navigate to="/" />} />
-          )
-        }
-        {
-          isAuthenticated ? (
-            <Route path="/userInfo" element={<UserInfo />} />
-            
-          ) : (
-            <Route path="/personalInfo" element={<Navigate to="/" />} />
-          )
-        }
-        {/* <Route path="/personalInfo" element={isAuthenticated ? <PersonalInfo /> : <Navigate to="/login" />} /> */}
+        {/* Protected Routes */}
+        <Route
+          path="/personalInfo"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PersonalInfo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/submit-application"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <SubmitApplication />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/userInfo"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <UserInfo />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

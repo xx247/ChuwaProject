@@ -6,6 +6,9 @@ const applicationRoutes = require('./routes/application');
 const documentRoutes = require('./routes/mdbFiles');
 const userInfoRoutes = require('./routes/userInfo');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
 
 const app = express();
 
@@ -14,6 +17,18 @@ app.use(cors());
 
 //Databse connection
 connectDB();
+let bucket;
+(() => {
+  mongoose.connection.on("connected", () => {
+    bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      bucketName: "filesBucket",
+    });
+  });
+})();
+
+// Middleware for parsing request body and logging requests
+app.use(bodyParser.json());
+//app.use(logger("dev"));
 
 // Routes
 app.use('/', authRoutes);
