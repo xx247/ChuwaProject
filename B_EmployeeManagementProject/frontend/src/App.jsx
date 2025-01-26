@@ -1,11 +1,11 @@
 // src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Registration from "./pages/Employee/Registration";
-import Login from "./pages/Employee/Login";
-import PersonalInfo from "./pages/Employee/PersonalInfo";
-import SubmitApplication from "./pages/Employee/SubmitApplication";
-import UserInfo from "./pages/Employee/UserInfo";
+import Registration from "./Pages/Employee/Registration";
+import Login from "./Pages/Employee/Login";
+import PersonalInfo from "./Pages/Employee/PersonalInfo";
+import SubmitApplication from "./Pages/Employee/SubmitApplication";
+import UserInfo from "./Pages/Employee/UserInfo";
 import Navbar from "./components/Navbar";
 import { useSelector } from 'react-redux';
 
@@ -21,7 +21,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Registration />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/userInfo" element={<UserInfo />} />
+        
         {
           isAuthenticated ? (
             <Route path="/personalInfo" element={<PersonalInfo />} />
@@ -33,6 +33,14 @@ const App = () => {
         {
           isAuthenticated ? (
             <Route path="/submit-application" element={< SubmitApplication/>} />            
+          ) : (
+            <Route path="/personalInfo" element={<Navigate to="/" />} />
+          )
+        }
+        {
+          isAuthenticated ? (
+            <Route path="/userInfo" element={<UserInfo />} />
+            
           ) : (
             <Route path="/personalInfo" element={<Navigate to="/" />} />
           )

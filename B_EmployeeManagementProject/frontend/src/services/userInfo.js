@@ -10,9 +10,21 @@ export const getUserInfo = async () => {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             }
         });
-        //console.log(response);
         return response;
     } catch (error) {
         return error.response;
     }
 };
+
+export const updateUserInfo = async (userInfo) => {
+    try {
+        const response = await axios.put(`${API_URL}/userInfo/updateUserInfo`, userInfo,{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+        });
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+}

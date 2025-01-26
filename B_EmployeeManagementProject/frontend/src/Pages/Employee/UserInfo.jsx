@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { getUserInfo } from "../../services/userInfo";
-
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -14,96 +12,90 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-import { Edit, Save, Cancel } from "@mui/icons-material";
+import { Edit, Save, Cancel, LocalConvenienceStoreOutlined } from "@mui/icons-material";
+import { getUserInfo } from "../../services/userInfo";
+import { updateUserInfo } from "../../services/userInfo";
 
-const UserInfo = () => {
-  const initialData = {
-    name: {
-      firstName: "John",
-      lastName: "Doe",
-      middleName: "Michael",
-      preferredName: "Johnny",
-      profilePicture: null,
-      email: "john.doe@example.com",
-      ssn: "123-45-6789",
-      dob: "1990-01-01",
-      gender: "Male",
-    },
-    address: {
-      building: "123",
-      street: "Main St",
-      city: "Springfield",
-      state: "IL",
-      zip: "62704",
-    },
-    contactInfo: {
-      cellPhone: "123-456-7890",
-      workPhone: "987-654-3210",
-    },
-    employment: {
-      visaTitle: "H1-B",
-      startDate: "2023-01-01",
-      endDate: "2024-01-01",
-    },
-    emergencyContact: {
-      firstName: "Jane",
-      lastName: "Smith",
-      middleName: "Anne",
-      phone: "111-222-3333",
-      email: "jane.smith@example.com",
-      relationship: "Friend",
-    },
-    documents: [
-      { name: "Driver's License", url: "/documents/driver-license.pdf" },
-      { name: "Work Authorization", url: "/documents/work-authorization.pdf" },
-    ],
-  };
-
-  const [data, setData] = useState(initialData);
-  const [editMode, setEditMode] = useState({});
-  const [tempData, setTempData] = useState(initialData);
+const PersonalInfo = () => {
+  const [initialData, setInitialData] = useState({});
+  const [data, setData] = useState({});
+  const [editMode, setEditMode] = useState({
+    "Name": false,
+    "Address": false,
+    "Contact Info": false,
+    "Employment": false,
+    "Emergency Contacts": false,
+  });
+  const [tempData, setTempData] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentSection, setCurrentSection] = useState("");
+  const [activeSection, setActiveSection] = useState("");
+
+  // Fetch initial data from the backend
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await getUserInfo();
+        const data = await response.data;
+        if (response.status === 200) {
+          setInitialData(data.userInfo);
+          setData(data.userInfo);
+          setTempData(data.userInfo);
+        } else {
+          console.error("Failed to fetch user info:", data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching user info:", err);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   const handleEdit = (section) => {
     setEditMode({ ...editMode, [section]: true });
-    setCurrentSection(section);
   };
 
-  const handleCancel = () => {
+  const handleCancel = (section) => {
     setDialogOpen(true);
+    setActiveSection(section);
   };
 
   const confirmCancel = () => {
-    setData(initialData);
-    setEditMode({ ...editMode, [currentSection]: false });
+    setTempData(initialData);
+    setEditMode({ ...editMode, [activeSection]: false });
+    setActiveSection("");
     setDialogOpen(false);
   };
 
-  const handleSave = (section) => {
-    setData({ ...data, [section]: tempData[section] });
-    setEditMode({ ...editMode, [section]: false });
+  const handleSave = async (section) => {
+    try {
+      const response = await updateUserInfo({userInfo: tempData});
+  
+      if (response.status === 200) {
+        setData(tempData); // Apply changes locally
+        setEditMode({ ...editMode, [section]: false });
+        alert("Changes saved successfully!");
+      } else {
+        console.error("Failed to save changes:", response.data.message);
+        alert("Failed to save changes. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      alert("Server error. Please try again later.");
+    }
   };
 
-  const handleFieldChange = (e, section, field) => {
-    setTempData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: e.target.value,
-      },
-    }));
-  };
-
-  const handleFileUpload = (e, section, field) => {
-    const file = e.target.files[0];
-    setTempData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: file,
-      },
-    }));
+  const handleFieldChange = (e, field) => {
+    // field can be nested, e.g., "address.street"
+    const fields = field.split(".");
+    setTempData((prev) => {
+      let newData = { ...prev };
+      let current = newData;
+      for (let i = 0; i < fields.length - 1; i++) {
+        current = current[fields[i]];
+      }
+      current[fields[fields.length - 1]] = e.target.value;
+      return newData;
+    });
   };
 
   return (
@@ -115,57 +107,49 @@ const UserInfo = () => {
       {/* Name Section */}
       <Section
         title="Name"
-        editMode={editMode.name}
-        onEdit={() => handleEdit("name")}
-        onSave={() => handleSave("name")}
-        onCancel={handleCancel}
+        editMode={editMode}
+        onEdit={() => handleEdit("Name")}
+        onSave={() => handleSave("Name")}
+        onCancel={() => handleCancel("Name")}
       >
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <TextField
               label="First Name"
-              value={editMode.name ? tempData.name.firstName : data.name.firstName}
-              onChange={(e) => handleFieldChange(e, "name", "firstName")}
+              value={editMode["Name"] ? tempData.firstName : data.firstName || ""}
+              onChange={(e) => handleFieldChange(e, "firstName")}
               fullWidth
-              disabled={!editMode.name}
+              disabled={!editMode["Name"]}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
               label="Last Name"
-              value={editMode.name ? tempData.name.lastName : data.name.lastName}
-              onChange={(e) => handleFieldChange(e, "name", "lastName")}
+              value={editMode["Name"] ? tempData.lastName : data.lastName || ""}
+              onChange={(e) => handleFieldChange(e, "lastName")}
               fullWidth
-              disabled={!editMode.name}
+              disabled={!editMode["Name"]}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
               label="Middle Name"
-              value={editMode.name ? tempData.name.middleName : data.name.middleName}
-              onChange={(e) => handleFieldChange(e, "name", "middleName")}
+              value={editMode["Name"] ? tempData.middleName : data.middleName || ""}
+              onChange={(e) => handleFieldChange(e, "middleName")}
               fullWidth
-              disabled={!editMode.name}
+              disabled={!editMode["Name"]}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
               label="Preferred Name"
-              value={editMode.name ? tempData.name.preferredName : data.name.preferredName}
-              onChange={(e) => handleFieldChange(e, "name", "preferredName")}
+              value={
+                editMode["Name"] ? tempData.preferredName : data.preferredName || ""
+              }
+              onChange={(e) => handleFieldChange(e, "preferredName")}
               fullWidth
-              disabled={!editMode.name}
+              disabled={!editMode["Name"]}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <Button variant="outlined" component="label" disabled={!editMode.name}>
-              Upload Profile Picture
-              <input
-                type="file"
-                hidden
-                onChange={(e) => handleFileUpload(e, "name", "profilePicture")}
-              />
-            </Button>
           </Grid>
         </Grid>
       </Section>
@@ -173,50 +157,314 @@ const UserInfo = () => {
       {/* Address Section */}
       <Section
         title="Address"
-        editMode={editMode.address}
-        onEdit={() => handleEdit("address")}
-        onSave={() => handleSave("address")}
-        onCancel={handleCancel}
+        editMode={editMode}
+        onEdit={() => handleEdit("Address")}
+        onSave={() => handleSave("Address")}
+        onCancel={() => handleCancel("Address")}
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
               label="Building/Apt #"
-              value={editMode.address ? tempData.address.building : data.address.building}
-              onChange={(e) => handleFieldChange(e, "address", "building")}
+              value={
+                editMode["Address"]
+                  ? tempData.address?.building
+                  : data.address?.building || ""
+              }
+              onChange={(e) => handleFieldChange(e, "address.building")}
               fullWidth
-              disabled={!editMode.address}
+              disabled={!editMode["Address"]}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label="Street Name"
-              value={editMode.address ? tempData.address.street : data.address.street}
-              onChange={(e) => handleFieldChange(e, "address", "street")}
+              value={
+                editMode["Address"]
+                  ? tempData.address?.street
+                  : data.address?.street || ""
+              }
+              onChange={(e) => handleFieldChange(e, "address.street")}
               fullWidth
-              disabled={!editMode.address}
+              disabled={!editMode["Address"]}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="City"
+              value={
+                editMode["Address"]
+                  ? tempData.address?.city
+                  : data.address?.city || ""
+              }
+              onChange={(e) => handleFieldChange(e, "address.city")}
+              fullWidth
+              disabled={!editMode["Address"]}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="State"
+              value={
+                editMode["Address"]
+                  ? tempData.address?.state
+                  : data.address?.state || ""
+              }
+              onChange={(e) => handleFieldChange(e, "address.state")}
+              fullWidth
+              disabled={!editMode["Address"]}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Zip Code"
+              value={
+                editMode["Address"]
+                  ? tempData.address?.zip
+                  : data.address?.zip || ""
+              }
+              onChange={(e) => handleFieldChange(e, "address.zip")}
+              fullWidth
+              disabled={!editMode["Address"]}
             />
           </Grid>
         </Grid>
       </Section>
 
-      {/* Documents Section */}
-      <Section title="Documents">
+      {/* Contact Info Section */}
+      <Section
+        title="Contact Info"
+        editMode={editMode}
+        onEdit={() => handleEdit("Contact Info")}
+        onSave={() => handleSave("Contact Info")}
+        onCancel={() => handleCancel("Contact Info")}
+      >
         <Grid container spacing={2}>
-          {data.documents.map((doc, index) => (
-            <Grid item xs={12} key={index}>
-              <Typography>
-                {doc.name} -{" "}
-                <Button href={doc.url} target="_blank">
-                  Preview
-                </Button>{" "}
-                <Button href={doc.url} download>
-                  Download
-                </Button>
-              </Typography>
-            </Grid>
-          ))}
+          <Grid item xs={6}>
+            <TextField
+              label="Cell Phone"
+              value={editMode["Contact Info"] ? tempData.cellPhone : data.cellPhone || ""}
+              onChange={(e) => handleFieldChange(e, "cellPhone")}
+              fullWidth
+              disabled={!editMode["Contact Info"]}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Work Phone"
+              value={editMode["Contact Info"] ? tempData.workPhone : data.workPhone || ""}
+              onChange={(e) => handleFieldChange(e, "workPhone")}
+              fullWidth
+              disabled={!editMode["Contact Info"]}
+            />
+          </Grid>
         </Grid>
+      </Section>
+
+      {/* Employment Section */}
+      <Section
+        title="Employment"
+        editMode={editMode}
+        onEdit={() => handleEdit("Employment")}
+        onSave={() => handleSave("Employment")}
+        onCancel={() => handleCancel("Employment")}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              label="Visa Title"
+              value={
+                editMode["Employment"]
+                  ? tempData.employment?.visaTitle
+                  : data.employment?.visaTitle || ""
+              }
+              onChange={(e) => handleFieldChange(e, "visaTitle")}
+              fullWidth
+              disabled={!editMode["Employment"]}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Start Date"
+              type="date"
+              value={
+                editMode["Employment"]
+                  ? tempData.employment?.startDate
+                  : data.employment?.startDate || ""
+              }
+              onChange={(e) => handleFieldChange(e, "startDate")}
+              fullWidth
+              disabled={!editMode["Employment"]}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="End Date"
+              type="date"
+              value={
+                editMode["Employment"]
+                  ? tempData.employment?.endDate
+                  : data.employment?.endDate || ""
+              }
+              onChange={(e) => handleFieldChange(e, "endDate")}
+              fullWidth
+              disabled={!editMode["Employment"]}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+        </Grid>
+      </Section>
+
+      {/* Emergency Contact Section */}
+      <Section
+        title="Emergency Contacts"
+        editMode={editMode}
+        onEdit={() => handleEdit("Emergency Contacts")}
+        onSave={() => handleSave("Emergency Contacts")}
+        onCancel={() => handleCancel("Emergency Contacts")}
+      >
+        {data.emergencyContacts?.map((contact, index) => (
+          <Grid container spacing={2} key={contact._id} sx={{ mb: 2 }}>
+            <Grid item xs={6}>
+              <TextField
+                label="First Name"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.firstName || ""
+                    : contact.firstName || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(e, `emergencyContacts.${index}.firstName`)
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Last Name"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.lastName || ""
+                    : contact.lastName || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(e, `emergencyContacts.${index}.lastName`)
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Middle Name"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.middleName || ""
+                    : contact.middleName || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(e, `emergencyContacts.${index}.middleName`)
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Phone"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.phone || ""
+                    : contact.phone || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(e, `emergencyContacts.${index}.phone`)
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Email"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.email || ""
+                    : contact.email || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(e, `emergencyContacts.${index}.email`)
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Relationship"
+                value={
+                  editMode["Emergency Contacts"]
+                    ? tempData.emergencyContacts[index]?.relationship || ""
+                    : contact.relationship || ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(
+                    e,
+                    `emergencyContacts.${index}.relationship`
+                  )
+                }
+                fullWidth
+                disabled={!editMode["Emergency Contacts"]}
+              />
+            </Grid>
+
+            {editMode["Emergency Contacts"] && (
+              <Grid item xs={12}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    const updatedContacts = [...tempData.emergencyContacts];
+                    updatedContacts.splice(index, 1);
+                    setTempData((prev) => ({
+                      ...prev,
+                      emergencyContacts: updatedContacts,
+                    }));
+                  }}
+                >
+                  Remove Contact
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+        ))}
+
+        {editMode.emergencyContacts && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              setTempData((prev) => ({
+                ...prev,
+                emergencyContacts: [
+                  ...prev.emergencyContacts,
+                  {
+                    firstName: "",
+                    lastName: "",
+                    middleName: "",
+                    phone: "",
+                    email: "",
+                    relationship: "",
+                    _id: Math.random().toString(36).substring(2, 15), // Temporary ID for new contacts
+                  },
+                ],
+              }));
+            }}
+          >
+            Add Emergency Contact
+          </Button>
+        )}
       </Section>
 
       {/* Discard Changes Dialog */}
@@ -241,9 +489,15 @@ const UserInfo = () => {
 // Reusable Section Component
 const Section = ({ title, children, editMode, onEdit, onSave, onCancel }) => (
   <Box sx={{ mb: 4 }}>
-    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       <Typography variant="h6">{title}</Typography>
-      {!editMode ? (
+      { !editMode[title] ? (
         <IconButton onClick={onEdit}>
           <Edit />
         </IconButton>
@@ -262,4 +516,4 @@ const Section = ({ title, children, editMode, onEdit, onSave, onCancel }) => (
   </Box>
 );
 
-export default UserInfo;
+export default PersonalInfo;
