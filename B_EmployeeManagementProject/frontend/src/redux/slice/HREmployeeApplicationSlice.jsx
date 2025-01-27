@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getEmployeeProfileById, getEmployeeProfiles, 
     getOnboardingApplications, getEmailRegistrations, 
-    getOnboardingApplication, getInProgressEmployeeVisaStatuses, getAllEmployeeVisaStatuses } from '../Services/hr';
+    getOnboardingApplication, getInProgressEmployeeVisaStatuses, getAllEmployeeVisaStatuses } from '../../Services/hr';
 
 export const fetchEmployeeProfileById = createAsyncThunk(
     'HREmployeeApplication/fetchEmployeeProfileById',

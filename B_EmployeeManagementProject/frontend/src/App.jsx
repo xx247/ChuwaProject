@@ -3,7 +3,7 @@ import VisaStatusesManagement from './Pages/HR/VisaStatusesManagement';
 import HiringManagement from './Pages/HR/HiringManagement';
 import EmployeeProfile from "./Pages/HR/EmployeeProfile";
 import OnboardingApplication from "./Pages/HR/OnboardingApplication";
-import Navigation from "./Components/HR/Navigation";
+import Navigation from "./Components/HRNavigation";
 import Home from "./Pages/HR/Home";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";

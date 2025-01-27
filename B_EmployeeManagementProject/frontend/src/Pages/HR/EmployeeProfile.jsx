@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchEmployeeProfileById } from '../../features/HREmployeeApplicationSlice';
+import { fetchEmployeeProfileById } from '../../redux/slice/HREmployeeApplicationSlice';
 
 function EmployeeProfile() {
   const params = useParams();

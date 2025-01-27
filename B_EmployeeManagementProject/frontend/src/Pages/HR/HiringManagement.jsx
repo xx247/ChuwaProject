@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link, useNavigate } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchEmailRegistrations, fetchOnboardingApplications } from '../../features/HREmployeeApplicationSlice';
+import { fetchEmailRegistrations, fetchOnboardingApplications } from '../../redux/slice/HREmployeeApplicationSlice';
 
 function HiringManagement() {
   const pendingOnboardingApplications = useSelector((state) => state.HREmployeeApplication.onboardingApplications?.['Pending']) ?? [];

@@ -6,7 +6,7 @@ import Input from '@mui/material/TextField';
 import { changeOnboardingApplications } from '../../Services/hr';
 import Button from '@mui/material/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchOnboardingApplication } from '../../features/HREmployeeApplicationSlice';
+import { fetchOnboardingApplication } from '../../redux/slice/HREmployeeApplicationSlice';
 
 function OnboardingApplication() {
   const id = useParams().id;

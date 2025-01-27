@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import { Link } from 'react-router';
 import Input from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchEmployeeProfiles, searchEmployeeProfiles } from '../../features/HREmployeeApplicationSlice';
+import { fetchEmployeeProfiles, searchEmployeeProfiles } from '../../redux/slice/HREmployeeApplicationSlice';
 
 function EmployeeProfiles() {
   const employeeProfilesSearched = useSelector((state) => state.HREmployeeApplication.employeeProfilesSearched);

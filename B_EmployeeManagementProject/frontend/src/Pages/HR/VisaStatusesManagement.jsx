@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Input from '@mui/material/TextField';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAllEmployeeVisaStatuses, fetchInProgressEmployeeVisaStatuses, searchEmployeeVisaStatuses } from '../../features/HREmployeeApplicationSlice';
+import { fetchAllEmployeeVisaStatuses, fetchInProgressEmployeeVisaStatuses, searchEmployeeVisaStatuses } from '../../redux/slice/HREmployeeApplicationSlice';
 import Button from '@mui/material/Button';
 
 function VisaStatusesManagement() {
