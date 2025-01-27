@@ -25,10 +25,10 @@ const Navbar = () => {
         {
           role === 'Employee' ? (
             <>
-            <Button color="inherit" onClick={() => navigate("/personalInfo")}>
+            <Button color="inherit" onClick={() => navigate("/personal-info")}>
               Personal Information
             </Button>
-            <Button color="inherit" onClick={() => navigate("/visaStatus")}>
+            <Button color="inherit" onClick={() => navigate("/visa-status")}>
               Visa Status Management
             </Button>
             </>

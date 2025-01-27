@@ -5,7 +5,7 @@ const PersonalInfoSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   middleName: { type: String },
   preferredName: { type: String },
-  profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
+  profilePicture: { type: String },
   address: {
     building: { type: String, required: true },
     street: { type: String, required: true },
@@ -20,12 +20,6 @@ const PersonalInfoSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["Male", "Female", "I do not wish to answer"],
-    required: true,
-  },
-  citizenshipStatus: {
-    type: String,
-    // work authorization
-    enum: ["Green Card", "Citizen", "H1-B", "L2", "F1(CPT/OPT)", "H4", "Other"],
     required: true,
   },
   workAuthorization: {

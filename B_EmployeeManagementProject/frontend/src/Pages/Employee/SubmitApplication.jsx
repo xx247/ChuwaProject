@@ -19,17 +19,13 @@ import {
   FormLabel,
 } from "@mui/material";
 import { submitApplication } from "../../services/application";
-import { uploadFile } from "../../services/files";
-import { useNavigate } from "react-router-dom";
 
 const ApplicationForm = () => {
   const user = useSelector((state) => state.auth.user);
 
-  const navigate = useNavigate();
-
   const [workAuthorization, setWorkAuthorization] = useState("");
   const [visaTitle, setVisaTitle] = useState("");
-  //const [fileType, setFileType] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [emergencyContacts, setEmergencyContacts] = useState([]);
 
   const handleWorkAuthChange = (e) => {
@@ -55,30 +51,8 @@ const ApplicationForm = () => {
     });
   };
 
-  const handleFileUpload = async (e,fileType) => {
-    const file = e.target.files[0];
-    if (!file) {
-      alert("Please select a file.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", file); // The file itself
-    formData.append("type", fileType); // The type of the file
-
-
-    try {
-      e.preventDefault();
-      const response = await uploadFile(formData);
-      if (response.status === 200) {
-        alert("Submit successful!");
-        navigate("/personalInfo", { replace: true });
-      } else if (response.status === 400) {
-        alert(`Submit failed: ${response.data.message}`);
-      }
-    } catch (error) {
-      console.log(error);
-      alert("Server error. Please try again later.");
-    }
+  const handleFileUpload = (event) => {
+    setUploadedFiles([...uploadedFiles, ...event.target.files]);
   };
 
   const addEmergencyContact = () => {
@@ -136,7 +110,7 @@ const ApplicationForm = () => {
     },
     documents: [],
   });
- 
+  console.log("formdata===============", formData);
 
   const handleChange = (e, fieldPath) => {
     console.log(e);
@@ -157,6 +131,7 @@ const ApplicationForm = () => {
     try {
       e.preventDefault();
       const response = await submitApplication(formData);
+      console.log(response);
       if (response.status === 200) {
         alert("Submit successful!");
         navigate("/personalInfo", { replace: true });
@@ -164,7 +139,6 @@ const ApplicationForm = () => {
         alert(`Submit failed: ${response.data.message}`);
       }
     } catch (error) {
-      console.log(error);
       alert("Server error. Please try again later.");
     }
   };
@@ -239,7 +213,7 @@ const ApplicationForm = () => {
         <Grid item xs={12}>
           <Button variant="outlined" component="label">
             Upload Profile Picture
-            <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"profilePicture")}} />
+            <input type="file" hidden />
           </Button>
         </Grid>
       </Grid>
@@ -355,7 +329,6 @@ const ApplicationForm = () => {
             fullWidth
             onChange={(e) => handleChange(e, "personalInfo.gender")}
             value={formData.personalInfo.gender}
-            required
           >
             {genders.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -414,11 +387,9 @@ const ApplicationForm = () => {
               <Select
                 value={formData.personalInfo.workAuthorization.visaTitle}
                 label="Work Visa Type"
-                onChange={(e) => {
-                  handleChange(e, "personalInfo.workAuthorization.visaTitle");
-                  setVisaTitle(e.target.value);
-                  e.target.value === "F1(CPT/OPT)" && setFileType("optReceipt");
-                }}
+                onChange={(e) =>
+                  handleChange(e, "personalInfo.workAuthorization.visaTitle")
+                }
               >
                 <MenuItem value="H1-B">H1-B</MenuItem>
                 <MenuItem value="L2">L2</MenuItem>
@@ -428,11 +399,11 @@ const ApplicationForm = () => {
               </Select>
             </FormControl>
           </Grid>
-          {visaTitle == "F1(CPT/OPT)" && (
+          {visaTitle === "F1(CPT/OPT)" && (
             <Grid item xs={12}>
               <Button variant="outlined" component="label">
                 Upload OPT Receipt
-                <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"optReceipt")}} />
+                <input type="file" hidden />
               </Button>
             </Grid>
           )}
@@ -469,23 +440,6 @@ const ApplicationForm = () => {
           </Grid>
         </Grid>
       )}
-
-      {/*Upload Files */}
-      <Typography variant="h6">Upload Documents</Typography>
-      <Button variant="outlined" component="label" sx={{ mb: 2 }}>
-        Upload Document
-        <input
-          type="file"
-          multiple
-          hidden
-          onChange={(e) => {handleFileUpload(e,"other")}}
-        />
-      </Button>
-      {/* <Box>
-        {uploadedFiles.map((file, index) => (
-          <Typography key={index}>{file.name}</Typography>
-        ))}
-      </Box> */}
 
       {/* References */}
       <Typography variant="h6">References</Typography>
@@ -559,7 +513,7 @@ const ApplicationForm = () => {
       <Button variant="contained" onClick={addEmergencyContact} sx={{ mb: 2 }}>
         Add Emergency Contact
       </Button>
-      {formData.personalInfo.emergencyContacts.map((contact, index) => (
+      {emergencyContacts.map((contact, index) => (
         <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
           <Grid item xs={6}>
             <TextField
@@ -567,12 +521,9 @@ const ApplicationForm = () => {
               fullWidth
               required
               onChange={(e) =>
-                handleChange(
-                  e,
-                  `personalInfo.emergencyContacts.${index}.firstName`
-                )
+                handleChange(e, "personalInfo.emergencyContacts.firstName")
               }
-              value={contact.firstName || ""}
+              value={formData.personalInfo.reference.firstName}
             />
           </Grid>
           <Grid item xs={6}>
@@ -581,12 +532,9 @@ const ApplicationForm = () => {
               fullWidth
               required
               onChange={(e) =>
-                handleChange(
-                  e,
-                  `personalInfo.emergencyContacts.${index}.lastName`
-                )
+                handleChange(e, "personalInfo.emergencyContacts.lastName")
               }
-              value={contact.lastName || ""}
+              value={formData.personalInfo.reference.lastName}
             />
           </Grid>
           <Grid item xs={6}>
@@ -594,12 +542,9 @@ const ApplicationForm = () => {
               label="Middle Name"
               fullWidth
               onChange={(e) =>
-                handleChange(
-                  e,
-                  `personalInfo.emergencyContacts.${index}.middleName`
-                )
+                handleChange(e, "personalInfo.emergencyContacts.middleName")
               }
-              value={contact.middleName || ""}
+              value={formData.personalInfo.reference.middleName}
             />
           </Grid>
           <Grid item xs={6}>
@@ -608,9 +553,9 @@ const ApplicationForm = () => {
               fullWidth
               required
               onChange={(e) =>
-                handleChange(e, `personalInfo.emergencyContacts.${index}.phone`)
+                handleChange(e, "personalInfo.emergencyContacts.phone")
               }
-              value={contact.phone || ""}
+              value={formData.personalInfo.reference.phone}
             />
           </Grid>
           <Grid item xs={6}>
@@ -619,9 +564,9 @@ const ApplicationForm = () => {
               fullWidth
               required
               onChange={(e) =>
-                handleChange(e, `personalInfo.emergencyContacts.${index}.email`)
+                handleChange(e, "personalInfo.emergencyContacts.email")
               }
-              value={contact.email || ""}
+              value={formData.personalInfo.reference.email}
             />
           </Grid>
           <Grid item xs={6}>
@@ -630,12 +575,9 @@ const ApplicationForm = () => {
               fullWidth
               required
               onChange={(e) =>
-                handleChange(
-                  e,
-                  `personalInfo.emergencyContacts.${index}.relationship`
-                )
+                handleChange(e, "personalInfo.emergencyContacts.relationship")
               }
-              value={contact.relationship || ""}
+              value={formData.personalInfo.reference.relationship}
             />
           </Grid>
 
@@ -644,17 +586,9 @@ const ApplicationForm = () => {
               variant="outlined"
               color="error"
               onClick={() => {
-                const updatedContacts = [
-                  ...formData.personalInfo.emergencyContacts,
-                ];
+                const updatedContacts = [...emergencyContacts];
                 updatedContacts.splice(index, 1); // Remove the contact at the current index
-                setFormData((prev) => ({
-                  ...prev,
-                  personalInfo: {
-                    ...prev.personalInfo,
-                    emergencyContacts: updatedContacts,
-                  },
-                }));
+                setEmergencyContacts(updatedContacts);
               }}
             >
               Remove Contact
@@ -662,6 +596,18 @@ const ApplicationForm = () => {
           </Grid>
         </Grid>
       ))}
+
+      {/*Upload Files */}
+      <Typography variant="h6">Upload Documents</Typography>
+      <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+        Upload Documents
+        <input type="file" multiple hidden onChange={handleFileUpload} />
+      </Button>
+      <Box>
+        {uploadedFiles.map((file, index) => (
+          <Typography key={index}>{file.name}</Typography>
+        ))}
+      </Box>
 
       {/* Submit Button */}
       <Box sx={{ textAlign: "center", mt: 4 }}>

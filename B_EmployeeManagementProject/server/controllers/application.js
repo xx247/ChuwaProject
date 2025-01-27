@@ -1,13 +1,13 @@
 const User = require('../models/User');
 const Application = require('../models/Application');
 const PersonalInfo = require('../models/PersonalInfo');
-const UserInfo = require('../models/UserInfo');
 //const Document = require('../models/Document');
 
 
 // Submit onboarding application
 const submitApplication = async (req, res) => {
   const { personalInfo, profilePicture, documents } = req.body; // Accept profile picture and documents as strings
+  console.log(req.body);
   try {
     // Find the user
     const user = await User.findById(req.user.id).populate('personalInfo onboardingApplication');
@@ -51,26 +51,15 @@ const submitApplication = async (req, res) => {
       user.onboardingApplication = applicationDoc._id;
     }
 
-    //initialize the user's information
-    let userInfoDoc;
-    userInfoDoc = new UserInfo({
-      ...personalInfo,
-      profilePicture,
-      documents
-    });
-    await userInfoDoc.save();
-    user.userInfo = userInfoDoc._id;
-
     // Save the user
     await user.save();
-    
+
     res.status(200).json({
       message: 'Application submitted successfully',
       personalInfo: personalInfoDoc,
       application: applicationDoc,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

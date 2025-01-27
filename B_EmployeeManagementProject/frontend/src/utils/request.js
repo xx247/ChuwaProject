@@ -23,11 +23,11 @@ const request = async (url, method, data) => {
         return Promise.reject('Unauthorized');
     }
 
-    if (response.statusText != 'OK') {
-        return Promise.reject(new Error(`Request failed with status ${String(response.data.message)}`));
+    if (!response.ok) {
+        return Promise.reject(new Error(`Request failed with status ${String(response.status)}`));
     }
 
-    return response;
+    return await response.json();
 }
 
 export default request;

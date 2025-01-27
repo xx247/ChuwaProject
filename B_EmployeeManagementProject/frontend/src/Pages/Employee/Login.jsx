@@ -3,7 +3,6 @@ import { replace, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logIn } from '../../services/authService';
 import { login } from '../../redux/slice/authSlice';
-import { Link as RouterLink } from "react-router-dom";
 
 import {
   Box,
@@ -11,7 +10,6 @@ import {
   Button,
   Typography,
   Grid,
-  Link,
 } from "@mui/material";
 
 const Login = () => {
@@ -115,20 +113,6 @@ const Login = () => {
         >
           Log in
         </Button>
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ mt: 2, color: "text.secondary" }}
-        >
-          New employee?{" "}
-          <Link
-            component={RouterLink}
-            to="/"
-            sx={{ color: "primary.main", textDecoration: "none" }}
-          >
-            register
-          </Link>
-        </Typography>
       </Box>
     </Box>
   );
