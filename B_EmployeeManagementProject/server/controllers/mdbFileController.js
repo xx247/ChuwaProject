@@ -64,7 +64,7 @@ const uploadFile = async(req, res) => {
         };
       }
       user.profilePicture = savedDocument._id;
-    } else if (type.startsWith("opt")) {
+    } else if (type.startsWith("opt")|| type === "i983" || type === "i20") {
       // Connect to visaStatus
       console.log("Connect to visaStatus");
       if (!user.visaStatus) {

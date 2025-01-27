@@ -69,10 +69,7 @@ const ApplicationForm = () => {
     try {
       e.preventDefault();
       const response = await uploadFile(formData);
-      if (response.status === 200) {
-        alert("Submit successful!");
-        navigate("/personalInfo", { replace: true });
-      } else if (response.status === 400) {
+      if (response.status === 400) {
         alert(`Submit failed: ${response.data.message}`);
       }
     } catch (error) {
@@ -107,7 +104,6 @@ const ApplicationForm = () => {
       ssn: "",
       dob: "",
       gender: "",
-      citizenshipStatus: "",
       workAuthorization: {
         visaTitle: "",
         citizenType: "",
