@@ -14,7 +14,7 @@ const SignUpPage = () => {
             alert('Sign up successful');
             navigate('/signin'); // Redirect to signin page after signup
         } catch (error) {
-            alert(`Sign in failed: ${error.response.data.message}`);
+            alert(`Sign up failed: ${error.response.data.message}`);
         }
     };
 
