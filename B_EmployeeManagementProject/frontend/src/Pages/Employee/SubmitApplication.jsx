@@ -17,6 +17,10 @@ import {
   Checkbox,
   Grid,
   FormLabel,
+  List,
+  ListItem,
+  ListItemText,
+
 } from "@mui/material";
 import { submitApplication } from "../../services/application";
 import { uploadFile } from "../../services/files";
@@ -31,6 +35,7 @@ const ApplicationForm = () => {
   const [visaTitle, setVisaTitle] = useState("");
   //const [fileType, setFileType] = useState("");
   const [emergencyContacts, setEmergencyContacts] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const handleWorkAuthChange = (e) => {
     const value = e.target.value;
@@ -69,7 +74,17 @@ const ApplicationForm = () => {
     try {
       e.preventDefault();
       const response = await uploadFile(formData);
-      if (response.status === 400) {
+
+      if (response.status === 201) {
+        alert("File uploaded successfully!");
+
+        // Add the uploaded file to the list
+        setUploadedFiles((prev) => [
+          ...prev,
+          { name: file.name, type: fileType, id: response.data.fileId || prev.length },
+        ]);
+        console.log("uploadedFiles",uploadedFiles);
+      } else if (response.status === 400) {
         alert(`Submit failed: ${response.data.message}`);
       }
     } catch (error) {
@@ -158,6 +173,8 @@ const ApplicationForm = () => {
         navigate("/personalInfo", { replace: true });
       } else if (response.status === 400) {
         alert(`Submit failed: ${response.data.message}`);
+      } else if (response.status === 500) {
+        alert("Please fill out all required fields.");
       }
     } catch (error) {
       console.log(error);
@@ -658,6 +675,28 @@ const ApplicationForm = () => {
           </Grid>
         </Grid>
       ))}
+
+      {/* Uploaded Files Summary */}
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h6">Uploaded Files</Typography>
+        {uploadedFiles.length > 0 ? (
+          <List>
+            {uploadedFiles.map((file) => (
+              <ListItem key={file.id}>
+                <ListItemText
+                  primary={file.name}
+                  secondary={`Type: ${file.type}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography variant="body1" sx={{ mt: 2, color: "text.secondary" }}>
+            No files uploaded yet.
+          </Typography>
+        )}
+      </Box>
+
 
       {/* Submit Button */}
       <Box sx={{ textAlign: "center", mt: 4 }}>
