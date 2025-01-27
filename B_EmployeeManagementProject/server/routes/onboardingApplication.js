@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const PersonalInfo = require('../models/PersonalInfo');
 const User = require('../models/User');
-const Document = require('../models/Document');
 const Application = require('../models/Application');
 
 const getOnboardingApplications = async (req, res) => {
@@ -39,9 +38,6 @@ const getFullOnboardingApplicationForReview = async (req, res) => {
     const onboardingApplicationId = userProfile.onboardingApplication;
     const personalInfo = await PersonalInfo.findOne({ _id: personalInfoId });
     const onboardingApplication = await Application.findOne({ _id: onboardingApplicationId });
-    // const documents = Promise.all(documentsIds.map(async (documentId) => {
-    //   return await Document.find({ _id: documentId});
-    // }));
     res.status(200).json({ personalInfo: personalInfo, documents: onboardingApplication.documents, onboardingApplication: onboardingApplication });
   } catch (err) {
     res.status(500).json({ message: err });

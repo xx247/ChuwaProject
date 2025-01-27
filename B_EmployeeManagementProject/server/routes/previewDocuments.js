@@ -9,7 +9,7 @@ let gridFS;
 
 connect.once('open', () => {
   gridFS = new mongoose.mongo.GridFSBucket(connect.db, {
-      bucketName: "uploads"
+      bucketName: "filesBucket"
   });
 });
 
