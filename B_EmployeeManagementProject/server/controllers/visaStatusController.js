@@ -4,7 +4,7 @@ const VisaStatus = require("../models/User");
 const getVisaStatus = async (req, res) => {
     try {
         // Find the user and populate their visa status
-        const user = await User.findById(req.user.id).populate("visaStatus");
+        const user = await User.findById(req.user.id).populate("visaStatus visaStatus.optReceipt visaStatus.optEAD visaStatus.i983 visaStatus.i20");
         if (!user) {
           return res.status(404).json({ message: "User not found" });
         }

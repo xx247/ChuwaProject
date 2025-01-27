@@ -31,7 +31,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/:token?" element={<Registration />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/visaStatus" element={<VisaStatus/>} />
+        {/* <Route path="/visaStatus" element={<VisaStatus/>} /> */}
         <Route path="/hr/employeeProfiles" element={<EmployeeProfiles />} />
         <Route path="/hr/visaStatus" element={<VisaStatusesManagement />} />
         <Route path="/hr/hiringManagement" element={<HiringManagement />} />
@@ -61,6 +61,14 @@ const App = () => {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <UserInfo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/visaStatus"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <VisaStatus />
             </ProtectedRoute>
           }
         />
