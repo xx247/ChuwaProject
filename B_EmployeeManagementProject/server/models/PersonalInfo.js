@@ -5,7 +5,7 @@ const PersonalInfoSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   middleName: { type: String },
   preferredName: { type: String },
-  profilePicture: { type: String },
+  profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' },
   address: {
     building: { type: String, required: true },
     street: { type: String, required: true },

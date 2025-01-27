@@ -19,6 +19,7 @@ import {
   FormLabel,
 } from "@mui/material";
 import { submitApplication } from "../../services/application";
+import { uploadFile } from "../../services/files";
 import { useNavigate } from "react-router-dom";
 
 const ApplicationForm = () => {
@@ -28,7 +29,7 @@ const ApplicationForm = () => {
 
   const [workAuthorization, setWorkAuthorization] = useState("");
   const [visaTitle, setVisaTitle] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  //const [fileType, setFileType] = useState("");
   const [emergencyContacts, setEmergencyContacts] = useState([]);
 
   const handleWorkAuthChange = (e) => {
@@ -54,8 +55,30 @@ const ApplicationForm = () => {
     });
   };
 
-  const handleFileUpload = (event) => {
-    setUploadedFiles([...uploadedFiles, ...event.target.files]);
+  const handleFileUpload = async (e,fileType) => {
+    const file = e.target.files[0];
+    if (!file) {
+      alert("Please select a file.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file); // The file itself
+    formData.append("type", fileType); // The type of the file
+
+
+    try {
+      e.preventDefault();
+      const response = await uploadFile(formData);
+      if (response.status === 200) {
+        alert("Submit successful!");
+        navigate("/personalInfo", { replace: true });
+      } else if (response.status === 400) {
+        alert(`Submit failed: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Server error. Please try again later.");
+    }
   };
 
   const addEmergencyContact = () => {
@@ -113,7 +136,7 @@ const ApplicationForm = () => {
     },
     documents: [],
   });
-  console.log("formdata===============", formData);
+ 
 
   const handleChange = (e, fieldPath) => {
     console.log(e);
@@ -391,9 +414,11 @@ const ApplicationForm = () => {
               <Select
                 value={formData.personalInfo.workAuthorization.visaTitle}
                 label="Work Visa Type"
-                onChange={(e) =>
-                  handleChange(e, "personalInfo.workAuthorization.visaTitle")
-                }
+                onChange={(e) => {
+                  handleChange(e, "personalInfo.workAuthorization.visaTitle");
+                  setVisaTitle(e.target.value);
+                  e.target.value === "F1(CPT/OPT)" && setFileType("optReceipt");
+                }}
               >
                 <MenuItem value="H1-B">H1-B</MenuItem>
                 <MenuItem value="L2">L2</MenuItem>
@@ -403,11 +428,11 @@ const ApplicationForm = () => {
               </Select>
             </FormControl>
           </Grid>
-          {visaTitle === "F1(CPT/OPT)" && (
+          {visaTitle == "F1(CPT/OPT)" && (
             <Grid item xs={12}>
               <Button variant="outlined" component="label">
                 Upload OPT Receipt
-                <input type="file" hidden />
+                <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"optReceipt")}} />
               </Button>
             </Grid>
           )}
@@ -444,6 +469,23 @@ const ApplicationForm = () => {
           </Grid>
         </Grid>
       )}
+
+      {/*Upload Files */}
+      <Typography variant="h6">Upload Documents</Typography>
+      <Button variant="outlined" component="label" sx={{ mb: 2 }}>
+        Upload Document
+        <input
+          type="file"
+          multiple
+          hidden
+          onChange={(e) => {handleFileUpload(e,"other")}}
+        />
+      </Button>
+      {/* <Box>
+        {uploadedFiles.map((file, index) => (
+          <Typography key={index}>{file.name}</Typography>
+        ))}
+      </Box> */}
 
       {/* References */}
       <Typography variant="h6">References</Typography>
@@ -518,106 +560,108 @@ const ApplicationForm = () => {
         Add Emergency Contact
       </Button>
       {formData.personalInfo.emergencyContacts.map((contact, index) => (
-  <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
-    <Grid item xs={6}>
-      <TextField
-        label="First Name"
-        fullWidth
-        required
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.firstName`)
-        }
-        value={contact.firstName || ""}
-      />
-    </Grid>
-    <Grid item xs={6}>
-      <TextField
-        label="Last Name"
-        fullWidth
-        required
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.lastName`)
-        }
-        value={contact.lastName || ""}
-      />
-    </Grid>
-    <Grid item xs={6}>
-      <TextField
-        label="Middle Name"
-        fullWidth
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.middleName`)
-        }
-        value={contact.middleName || ""}
-      />
-    </Grid>
-    <Grid item xs={6}>
-      <TextField
-        label="Phone"
-        fullWidth
-        required
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.phone`)
-        }
-        value={contact.phone || ""}
-      />
-    </Grid>
-    <Grid item xs={6}>
-      <TextField
-        label="Email"
-        fullWidth
-        required
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.email`)
-        }
-        value={contact.email || ""}
-      />
-    </Grid>
-    <Grid item xs={6}>
-      <TextField
-        label="Relationship"
-        fullWidth
-        required
-        onChange={(e) =>
-          handleChange(e, `personalInfo.emergencyContacts.${index}.relationship`)
-        }
-        value={contact.relationship || ""}
-      />
-    </Grid>
+        <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
+          <Grid item xs={6}>
+            <TextField
+              label="First Name"
+              fullWidth
+              required
+              onChange={(e) =>
+                handleChange(
+                  e,
+                  `personalInfo.emergencyContacts.${index}.firstName`
+                )
+              }
+              value={contact.firstName || ""}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Last Name"
+              fullWidth
+              required
+              onChange={(e) =>
+                handleChange(
+                  e,
+                  `personalInfo.emergencyContacts.${index}.lastName`
+                )
+              }
+              value={contact.lastName || ""}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Middle Name"
+              fullWidth
+              onChange={(e) =>
+                handleChange(
+                  e,
+                  `personalInfo.emergencyContacts.${index}.middleName`
+                )
+              }
+              value={contact.middleName || ""}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Phone"
+              fullWidth
+              required
+              onChange={(e) =>
+                handleChange(e, `personalInfo.emergencyContacts.${index}.phone`)
+              }
+              value={contact.phone || ""}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Email"
+              fullWidth
+              required
+              onChange={(e) =>
+                handleChange(e, `personalInfo.emergencyContacts.${index}.email`)
+              }
+              value={contact.email || ""}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Relationship"
+              fullWidth
+              required
+              onChange={(e) =>
+                handleChange(
+                  e,
+                  `personalInfo.emergencyContacts.${index}.relationship`
+                )
+              }
+              value={contact.relationship || ""}
+            />
+          </Grid>
 
-    <Grid item xs={12}>
-      <Button
-        variant="outlined"
-        color="error"
-        onClick={() => {
-          const updatedContacts = [...formData.personalInfo.emergencyContacts];
-          updatedContacts.splice(index, 1); // Remove the contact at the current index
-          setFormData((prev) => ({
-            ...prev,
-            personalInfo: {
-              ...prev.personalInfo,
-              emergencyContacts: updatedContacts,
-            },
-          }));
-        }}
-      >
-        Remove Contact
-      </Button>
-    </Grid>
-  </Grid>
-))}
-
-      {/*Upload Files */}
-      <Typography variant="h6">Upload Documents</Typography>
-      <Button variant="outlined" component="label" sx={{ mb: 2 }}>
-        Upload Documents
-        <input type="file" multiple hidden onChange={handleFileUpload} />
-      </Button>
-      <Box>
-        {uploadedFiles.map((file, index) => (
-          <Typography key={index}>{file.name}</Typography>
-        ))}
-      </Box>
+          <Grid item xs={12}>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => {
+                const updatedContacts = [
+                  ...formData.personalInfo.emergencyContacts,
+                ];
+                updatedContacts.splice(index, 1); // Remove the contact at the current index
+                setFormData((prev) => ({
+                  ...prev,
+                  personalInfo: {
+                    ...prev.personalInfo,
+                    emergencyContacts: updatedContacts,
+                  },
+                }));
+              }}
+            >
+              Remove Contact
+            </Button>
+          </Grid>
+        </Grid>
+      ))}
 
       {/* Submit Button */}
       <Box sx={{ textAlign: "center", mt: 4 }}>

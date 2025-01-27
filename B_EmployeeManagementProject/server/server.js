@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth');
 const applicationRoutes = require('./routes/application');
 const documentRoutes = require('./routes/mdbFiles');
 const userInfoRoutes = require('./routes/userInfo');
+const visaStatusRoutes = require('./routes/visaStatus');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -35,6 +36,7 @@ app.use('/', authRoutes);
 app.use('/application', applicationRoutes);
 app.use('/document', documentRoutes);
 app.use('/userInfo', userInfoRoutes);
+app.use('/visaStatus', visaStatusRoutes);
 
 //Start server
 const PORT = process.env.PORT || 5000;

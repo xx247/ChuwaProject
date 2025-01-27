@@ -6,21 +6,26 @@ import Login from "./Pages/Employee/Login";
 import PersonalInfo from "./Pages/Employee/PersonalInfo";
 import SubmitApplication from "./Pages/Employee/SubmitApplication";
 import UserInfo from "./Pages/Employee/UserInfo";
+import VisaStatus from "./Pages/Employee/VisaStatus";
 import Navbar from "./components/Navbar";
 import { useSelector } from 'react-redux';
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   //const isAuthenticated=true;
-  const isAuthenticated = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.auth.token);
+  const isAuthenticated = !!token;
+  console.log("isAuthenticated",isAuthenticated);
 
 
   return (
     <Router>
       {isAuthenticated && <Navbar />}
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Registration />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/visaStatus" element={<VisaStatus/>} />
         
         {/* Protected Routes */}
         <Route
