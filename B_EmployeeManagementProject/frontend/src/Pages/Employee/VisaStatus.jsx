@@ -13,8 +13,9 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { getVisaStatus} from "../../services/visaStatus.js";
+import { getVisaStatus } from "../../services/visaStatus.js";
 import { Link as RouterLink } from "react-router-dom";
+import { uploadFile } from "../../services/files";
 
 const VisaStatusManagement = () => {
   const [visaStatus, setVisaStatus] = useState({});
@@ -30,7 +31,6 @@ const VisaStatusManagement = () => {
         const response = await getVisaStatus();
         if (response.status === 200) {
           setVisaStatus(response.data.visaStatus);
-          console.log(visaStatus);
         } else {
           console.error("Failed to fetch visa status:", response.data.message);
         }
@@ -42,178 +42,194 @@ const VisaStatusManagement = () => {
     fetchVisaStatus();
   }, []);
 
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = async (e, fileType) => {
+    const file = e.target.files[0];
+    if (!file) {
+      alert("Please select a file.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file); // The file itself
+    formData.append("type", fileType); // The type of the file
+
+    try {
+      e.preventDefault();
+      const response = await uploadFile(formData);
+      if (response.status === 400) {
+        alert(`Submit failed: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Server error. Please try again later.");
+    }
+  };
+
+  const openFeedbackDialog = (feedback) => {
+    setFeedback(feedback);
+    setDialogOpen(true);
+  };
+
+  const closeFeedbackDialog = () => {
+    setDialogOpen(false);
+  };
+
   if (Object.keys(visaStatus).length === 0) {
     return (
       <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: `calc(100vh - 64px)`, 
-        backgroundColor: "#f5f5f5", 
-      }}
-    >
-      <Card sx={{ maxWidth: 400, padding: 2 }}>
-        <CardContent sx={{ textAlign: "center" }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Your OPT files has never been submitted. 
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            component={RouterLink}
-            to="/submit-application"
-          >
-            Submit OPT files Now
-          </Button>
-          <Typography
-          variant="body2"
-          align="center"
-          sx={{ mt: 2, color: "text.secondary" }}
-        >
-          Not OPT visa?{" "}
-          <Link
-            component={RouterLink}
-            to="/personalInfo"
-            sx={{ color: "primary.main", textDecoration: "none" }}
-          >
-            Back to personal Info page
-          </Link>
-        </Typography>
-        </CardContent>
-        
-      </Card>
-    </Box>
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: `calc(100vh - 64px)`,
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <Card sx={{ maxWidth: 400, padding: 2 }}>
+          <CardContent sx={{ textAlign: "center" }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Your OPT files has never been submitted.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              component={RouterLink}
+              to="/submit-application"
+            >
+              Submit OPT files Now
+            </Button>
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ mt: 2, color: "text.secondary" }}
+            >
+              Not OPT visa?{" "}
+              <Link
+                component={RouterLink}
+                to="/personalInfo"
+                sx={{ color: "primary.main", textDecoration: "none" }}
+              >
+                Back to personal Info page
+              </Link>
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
     );
-  }else{
-    
   }
 
-  // const handleFileChange = (event) => {
-  //   setSelectedFile(event.target.files[0]);
-  // };
+  const renderDocumentStep = (key, index) => {
+    console.log("=========visa:", visaStatus);
+    const document = visaStatus[key];
+    console.log("====document:", document);
+    if (!document) return null;
 
-  // const handleUpload = async (type) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("file", selectedFile);
-  //     formData.append("type", type); // Include the type in the form data
+    const isPending = document.status === "Pending";
+    const isApproved = document.status === "Approved";
+    const isRejected = document.status === "Rejected";
 
-  //     const response = await uploadSingleFile(formData);
-  //     if (response.status === 200) {
-  //       alert(`${type} uploaded successfully!`);
-  //       setVisaStatus((prev) => ({
-  //         ...prev,
-  //         [type]: response.data.document,
-  //       }));
-  //       setSelectedFile(null);
-  //     } else {
-  //       console.error("Failed to upload document:", response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error uploading document:", error);
-  //   }
-  // };
+    return (
+      <Box key={key} sx={{ mb: 4 }}>
+        <Typography variant="h6">{documentOrder[index]}</Typography>
+        <Typography>
+          Status: <strong>{document.status}</strong>
+        </Typography>
 
-  // const handleDownload = async (id) => {
-  //   try {
-  //     const response = await downloadFile(id);
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", "document.pdf"); // Change file name as needed
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     link.remove();
-  //   } catch (error) {
-  //     console.error("Error downloading file:", error);
-  //   }
-  // };
+        {isPending && (
+          <Typography>
+            Waiting for HR to approve your {documentOrder[index]}.
+          </Typography>
+        )}
 
-  // const renderDocumentStep = (type, document, index) => {
-  //   const isPending = document?.status === "Pending";
-  //   const isApproved = document?.status === "Approved";
-  //   const isRejected = document?.status === "Rejected";
+        {isApproved && index < documentOrder.length - 1 && (
+          <Typography>
+            Please upload your {documentOrder[index + 1]}.
+          </Typography>
+        )}
 
-  //   return (
-  //     <Box key={type} sx={{ mb: 4 }}>
-  //       <Typography variant="h6">{type.replace(/([A-Z])/g, " $1")}</Typography>
-  //       <Typography>Status: {document?.status || "Not Uploaded"}</Typography>
+        {isRejected && (
+          <Box sx={{ mt: 2 }}>
+            {/* <Typography>
+              Rejected feedback: <strong>{document.feedback}</strong>
+            </Typography> */}
+            <Button variant="outlined" component="label">
+              ReUpload {documentOrder[index]}
+              <input
+                type="file"
+                hidden
+                onChange={(e) => {
+                  handleFileUpload(e, documentOrder[index + 1]);
+                }}
+              />
+            </Button>
+          </Box>
+        )}
 
-  //       {isPending && <Typography>Waiting for HR to approve your {type}.</Typography>}
+        {/* Upload Section */}
+        {isApproved && index < documentOrder.length && (
+          <Box sx={{ mt: 2 }}>
+            <Button variant="outlined" component="label">
+              Upload {documentOrder[index + 1]}
+              <input
+                type="file"
+                hidden
+                onChange={(e) => {
+                  handleFileUpload(e, documentOrder[index + 1]);
+                }}
+              />
+            </Button>
+          </Box>
+        )}
 
-  //       {isApproved && index < documentOrder.length - 1 && (
-  //         <Typography>
-  //           Please upload your {documentOrder[index + 1].replace(/([A-Z])/g, " $1")}.
-  //         </Typography>
-  //       )}
+        {/* Templates for I-983 */}
+        {key === "i983" && isApproved && (
+          <Box sx={{ mt: 2 }}>
+            <Typography>Templates:</Typography>
+            <Button href="/templates/empty-template.pdf" download>
+              Download Empty Template
+            </Button>
+            <Button href="/templates/sample-template.pdf" download>
+              Download Sample Template
+            </Button>
+          </Box>
+        )}
 
-  //       {isRejected && (
-  //         <Typography color="error">
-  //           Rejected: {document?.feedback || "No feedback provided."}
-  //         </Typography>
-  //       )}
+        {isRejected && (
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => openFeedbackDialog(document.feedback)}
+          >
+            View Feedback
+          </Button>
+        )}
+      </Box>
+    );
+  };
 
-  //       {/* Upload Section */}
-  //       {(isApproved || !document) && (
-  //         <Box sx={{ mt: 2 }}>
-  //           <Button variant="outlined" component="label">
-  //             Upload File
-  //             <input type="file" hidden onChange={handleFileChange} />
-  //           </Button>
-  //           {selectedFile && (
-  //             <Typography sx={{ mt: 1 }}>
-  //               Selected File: {selectedFile.name}
-  //             </Typography>
-  //           )}
-  //           <Button
-  //             variant="contained"
-  //             color="primary"
-  //             onClick={() => handleUpload(type)}
-  //             sx={{ mt: 2 }}
-  //             disabled={!selectedFile}
-  //           >
-  //             Submit
-  //           </Button>
-  //         </Box>
-  //       )}
+  return (
+    <Box sx={{ maxWidth: 800, margin: "auto", padding: 4 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Visa Status Management
+      </Typography>
 
-  //       {document && document.filePath && (
-  //         <Button
-  //           variant="contained"
-  //           color="secondary"
-  //           onClick={() => handleDownload(document._id)}
-  //           sx={{ mt: 2 }}
-  //         >
-  //           Download File
-  //         </Button>
-  //       )}
-  //     </Box>
-  //   );
-  // };
+      {documentOrder.map((key, index) => renderDocumentStep(key, index))}
 
-  // return (
-  //   <Box sx={{ maxWidth: 800, margin: "auto", padding: 4 }}>
-  //     <Typography variant="h4" sx={{ mb: 3 }}>
-  //       Visa Status Management
-  //     </Typography>
-
-  //     {documentOrder.map((type, index) =>
-  //       renderDocumentStep(type, visaStatus[type], index)
-  //     )}
-
-  //     {/* Feedback Dialog */}
-  //     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-  //       <DialogTitle>HR Feedback</DialogTitle>
-  //       <DialogContent>
-  //         <DialogContentText>{feedback}</DialogContentText>
-  //       </DialogContent>
-  //       <DialogActions>
-  //         <Button onClick={() => setDialogOpen(false)}>Close</Button>
-  //       </DialogActions>
-  //     </Dialog>
-  //   </Box>
-  // );
+      {/* Feedback Dialog */}
+      <Dialog open={dialogOpen} onClose={closeFeedbackDialog}>
+        <DialogTitle>HR Feedback</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{feedback}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeFeedbackDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
 };
 
 export default VisaStatusManagement;
