@@ -7,7 +7,6 @@ const applicationRoutes = require('./routes/application');
 const documentRoutes = require('./routes/mdbFiles');
 const userInfoRoutes = require('./routes/userInfo');
 const visaStatusRoutes = require('./routes/visaStatus');
-const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const emailRegistrationRoutes = require('../server/routes/emailRegistration');

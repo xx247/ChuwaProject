@@ -56,7 +56,7 @@ const getInProgressEmployeeVisaStatuses = async (req, res) => {
         resp.nextStep = 'Review Document and Submit opt EAD';
         resp.recentDocument = employeeProfile.visaStatus?.optReceipt;
       } else {
-        resp.nextStep = 'Review Document and Submit opt receipt';
+        resp.nextStep = 'Submit opt receipt';
       }
       resp.name = employeeProfile.personalInfo.firstName + " " + employeeProfile.personalInfo.lastName;
       resp.workAuthorization = employeeProfile.personalInfo.workAuthorization;

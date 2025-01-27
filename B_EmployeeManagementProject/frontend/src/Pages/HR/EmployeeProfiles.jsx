@@ -25,6 +25,7 @@ function EmployeeProfiles() {
 
   return (
     <>
+    <div style={{padding: '60px'}}>
       <div>Total Employees ({employeeProfilesSearched.length})</div>
       <Input onChange={searchEmployees} sx={{ minWidth: 650, margin: '20px' }} label='search employee name'/>
       <TableContainer>
@@ -58,6 +59,7 @@ function EmployeeProfiles() {
           </TableBody>
         </Table>
       </TableContainer>
+      </div>
     </>
   )
 }

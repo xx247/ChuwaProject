@@ -82,3 +82,18 @@ export async function downloadFile(id) {
     const resp = await fetch(hostURL + '/downloadFile/' + id);
     return resp.blob();
 }
+
+export async function getEmailRegistration(token) {
+    const resp = await fetch(hostURL + '/emailRegistartion/' + token);
+    return resp.json();
+}
+
+export async function registerEmail(token) {
+    const resp = await fetch(hostURL + "/registerEmail/" + token, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    return resp.json();
+}

@@ -22,14 +22,14 @@ const App = () => {
   const token = useSelector((state) => state.auth.token);
   const isAuthenticated = !!token;
   console.log("isAuthenticated",isAuthenticated);
-
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <Router>
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && (user.role === "Employee" ? <Navbar /> : <Navigation />)}
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Registration />} />
+        <Route path="/:token?" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         <Route path="/visaStatus" element={<VisaStatus/>} />
         <Route path="/hr/employeeProfiles" element={<EmployeeProfiles />} />

@@ -45,6 +45,7 @@ function HiringManagement() {
 
   return (
     <>
+    <div style={{padding: '60px'}}>
       <div style={{margin: '15px' }}>Registration tokens</div>
       <Input label="name" onChange={inputName} sx={{ margin: '5px' }} />
       <Input label="email" onChange={inputEmail} sx={{ margin: '5px' }}/>
@@ -163,6 +164,7 @@ function HiringManagement() {
         </TableBody>
       </Table>
     </TableContainer>
+    </div>
     </>
   );
 }

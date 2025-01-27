@@ -17,6 +17,7 @@ function EmployeeProfile() {
 
   return (
     <>
+    <div style={{padding: '60px'}}>
       <div>Employee Profile</div>
       <Box sx={{ width: '100%' }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -132,6 +133,7 @@ function EmployeeProfile() {
           </Grid>
         </Grid>
       </Box>
+    </div>
     </>
   )
 }

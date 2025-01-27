@@ -4,7 +4,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const { Readable } = require('stream');
 
-const connect = mongoose.createConnection('mongodb://localhost:27017/', { useNewUrlParser: true, useUnifiedTopology: true });
+const connect = mongoose.createConnection(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 let gridFS;
 
 connect.once('open', () => {
