@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getApplicationStatus } from "../../services/application";
 
 
-const PersonalInfo = () => {
+const Home = () => {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -103,4 +103,4 @@ const PersonalInfo = () => {
   );
 };
 
-export default PersonalInfo;
+export default Home;
