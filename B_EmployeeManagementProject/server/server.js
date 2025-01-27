@@ -7,6 +7,7 @@ const emailRegistrationRoutes = require('../server/routes/emailRegistration');
 const onboardingApplicationRoutes = require('../server/routes/onboardingApplication');
 const visaStatusesRoutes = require('../server/routes/visaStatuses');
 const employeeProfileRoutes = require('../server/routes/employeeProfile');
+const previewDocumentsRoutes = require('../server/routes/previewDocuments');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('', emailRegistrationRoutes);
 app.use('', onboardingApplicationRoutes);
 app.use('', visaStatusesRoutes);
 app.use('', employeeProfileRoutes);
+app.use('', previewDocumentsRoutes);
 
 //Databse connection
 connectDB();

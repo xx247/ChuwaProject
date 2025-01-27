@@ -1,17 +1,18 @@
-import './EmployeeProfile.css';
 import { useParams } from 'react-router';
-import { useState, useEffect } from 'react';
-import { getEmployeeProfileById } from '../../Services/hr';
+import { useEffect } from 'react';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchEmployeeProfileById } from '../../features/HREmployeeApplicationSlice';
 
 function EmployeeProfile() {
   const params = useParams();
   const profile_id = params.id;
-  const [ profile, setProfile ] = useState({});
+  const profile = useSelector((state) => state.HREmployeeApplication.employeeProfile);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getEmployeeProfileById(profile_id).then((data) => setProfile(data[0]));
+    dispatch(fetchEmployeeProfileById(profile_id));
   }, []);
 
   return (
@@ -41,7 +42,7 @@ function EmployeeProfile() {
             <div>Date of Birth</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.dob}</div>
+            <div>{new Date(profile.dob).toLocaleDateString()}</div>
           </Grid>
           <Grid size={6}>
             <div>Address</div>

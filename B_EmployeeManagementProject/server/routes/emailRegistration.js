@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const crypto = require('crypto');
 const EmailRegistration = require('../models/EmailRegistration');
+const transporter = require('../config/nodemailer');
 
 const getEmailRegistrationLink = async (req, res) => {
   try {
@@ -15,7 +16,12 @@ const getEmailRegistrationLink = async (req, res) => {
     if (!resp) {
       const emailRegistration = new EmailRegistration({ name: name, email: email, link: token, validUntil: validUntil, registered: false });
       await emailRegistration.save();
-      // send email
+      await transporter.sendMail({
+        from: '"Ziwei" <topveronicaa@gmail.com>',
+        to: email,
+        subject: "Registration",
+        html: `<div>Please use the link to register</div>`, 
+      });
       res.status(200).json(emailRegistration);
     } else {
       res.status(400).json({ message: "email already exists" });

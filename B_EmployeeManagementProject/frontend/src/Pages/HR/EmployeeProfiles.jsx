@@ -1,6 +1,4 @@
-import './EmployeeProfiles.css';
-import { getEmployeeProfiles } from '../../Services/hr';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,32 +7,26 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Link } from 'react-router';
 import Input from '@mui/material/TextField';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEmployeeProfiles, searchEmployeeProfiles } from '../../features/HREmployeeApplicationSlice';
 
 function EmployeeProfiles() {
-  const [ employeeProfiles, setEmployeeProfiles ] = useState([]);
-  const [ employeeProfilesSearched, setemployeeProfilesSearched ] = useState([]);
+  const employeeProfilesSearched = useSelector((state) => state.HREmployeeApplication.employeeProfilesSearched);
+  const dispatch = useDispatch();
   
   useEffect(() => {
-      getEmployeeProfiles().then(resp => {
-        setEmployeeProfiles(resp);
-        setemployeeProfilesSearched(resp);
-      });
+    dispatch(fetchEmployeeProfiles());
   }, []);
 
   const searchEmployees = (e) => {
     const name = e.target.value.toLowerCase();
-    setemployeeProfilesSearched((prev) => {
-      return employeeProfiles.filter((profile) => {
-        return profile.firstName.toLowerCase().includes(name) || 
-        profile.lastName.toLowerCase().includes(name) || profile.preferredName.toLowerCase().includes(name);
-      })
-    });
+    dispatch(searchEmployeeProfiles(name));
   }
 
   return (
     <>
-      <div>Employee Profiles ({employeeProfilesSearched.length})</div>
-      <Input onChange={searchEmployees}/>
+      <div>Total Employees ({employeeProfilesSearched.length})</div>
+      <Input onChange={searchEmployees} sx={{ minWidth: 650, margin: '20px' }} label='search employee name'/>
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

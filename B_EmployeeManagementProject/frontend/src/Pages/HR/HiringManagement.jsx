@@ -1,5 +1,4 @@
-import './HiringManagement.css';
-import { getEmailRegistrationLink, getEmailRegistrations, getOnboardingApplications } from '../../Services/hr';
+import { getEmailRegistrationLink } from '../../Services/hr';
 import Input from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState, useEffect } from 'react';
@@ -11,21 +10,24 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link, useNavigate } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchEmailRegistrations, fetchOnboardingApplications } from '../../features/HREmployeeApplicationSlice';
 
 function HiringManagement() {
-  const [ pendingOnboardingApplications, setPendingOnboardingApplications ] = useState([]);
-  const [ approvedOnboardingApplications, setApprovedOnboardingApplications ] = useState([]);
-  const [ rejectedOnboardingApplications, setRejectedOnboardingApplications ] = useState([]);
-  const [ emailRegistrations, setEmailRegistrations ] = useState([]);
+  const pendingOnboardingApplications = useSelector((state) => state.HREmployeeApplication.onboardingApplications?.['Pending']) ?? [];
+  const approvedOnboardingApplications = useSelector((state) => state.HREmployeeApplication.onboardingApplications?.['Approved']) ?? [];
+  const rejectedOnboardingApplications = useSelector((state) => state.HREmployeeApplication.onboardingApplications?.['Rejected']) ?? [];
+  const emailRegistrations = useSelector((state) => state.HREmployeeApplication.emailRegistrations);
   const [ name, setName ] = useState("");
   const [ email, setEmail ] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getOnboardingApplications("Pending").then((application) => setPendingOnboardingApplications(application));
-    getOnboardingApplications("Approved").then((application) => setApprovedOnboardingApplications(application));
-    getOnboardingApplications("Rejected").then((application) => setRejectedOnboardingApplications(application));
-    getEmailRegistrations().then((registration) => setEmailRegistrations(registration));
+    dispatch(fetchOnboardingApplications('Pending'));
+    dispatch(fetchOnboardingApplications('Approved'));
+    dispatch(fetchOnboardingApplications('Rejected'));
+    dispatch(fetchEmailRegistrations());
   }, []);
 
   const sendRegistrationEmail = () => {
@@ -43,13 +45,11 @@ function HiringManagement() {
 
   return (
     <>
-      <div>Hiring Management</div>
-
-      <div>Registration tokens</div>
-      <Input label="name" onChange={inputName}/>
-      <Input label="email" onChange={inputEmail}/>
-      <Button variant="contained" onClick={sendRegistrationEmail}>Generate token and send email</Button>
-      <div>Past Registrations</div>
+      <div style={{margin: '15px' }}>Registration tokens</div>
+      <Input label="name" onChange={inputName} sx={{ margin: '5px' }} />
+      <Input label="email" onChange={inputEmail} sx={{ margin: '5px' }}/>
+      <Button variant="contained" onClick={sendRegistrationEmail} sx={{ margin: '5px', padding: '15px' }}>Generate token and send email</Button>
+      <div style={{margin: '15px' }}>Past Registrations ({emailRegistrations.length})</div>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -80,7 +80,7 @@ function HiringManagement() {
       </Table>
     </TableContainer>
 
-      <div>Onboarding Application Reviews</div>
+      <div style={{margin: '25px' }}>Onboarding Application Reviews</div>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>

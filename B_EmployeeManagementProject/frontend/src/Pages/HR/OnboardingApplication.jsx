@@ -1,23 +1,23 @@
-import './OnboardingApplication.css';
 import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { getOnboardingApplication } from '../../Services/hr';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Input from '@mui/material/TextField';
 import { changeOnboardingApplications } from '../../Services/hr';
+import Button from '@mui/material/Button';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchOnboardingApplication } from '../../features/HREmployeeApplicationSlice';
 
 function OnboardingApplication() {
   const id = useParams().id;
-  const [ profile, setProfile ] = useState({});
-  const [ application, setApplication ] = useState({});
+  const profile = useSelector((state) => state.HREmployeeApplication.onboardingApplication?.personalInfo) ?? {};
+  const application = useSelector((state) => state.HREmployeeApplication.onboardingApplication?.onboardingApplication) ?? {};
+  const documents = useSelector((state) => state.HREmployeeApplication.onboardingApplication?.documents) ?? [];
   const [ feedback, setFeedback ] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getOnboardingApplication(id).then((application) => {
-      setProfile(application.personalInfo);
-      setApplication(application.onboardingApplication);
-    });
+    dispatch(fetchOnboardingApplication(id));
   }, []);
 
   const approveApplication = () => {
@@ -32,9 +32,28 @@ function OnboardingApplication() {
     setFeedback(e.target.value);
   }
 
+  const previewFile = async (document='679306800d24796901390808') => {
+    const document_blob = await downloadFile(document);
+    const file = new Blob([document_blob], { type: "application/pdf" });
+    const url = URL.createObjectURL(file);
+    window.open(url);
+  }
+
   return <>
+  <div>Onboarding Application</div>
     <Box sx={{ width: '100%' }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{
+          '--Grid-borderWidth': '1px',
+          borderTop: 'var(--Grid-borderWidth) solid',
+          borderLeft: 'var(--Grid-borderWidth) solid',
+          borderColor: 'divider',
+          '& > div': {
+            borderRight: 'var(--Grid-borderWidth) solid',
+            borderBottom: 'var(--Grid-borderWidth) solid',
+            borderColor: 'divider',
+          },
+          'margin-top': '20px'
+        }}>
         <Grid size={6}>
           <div>Name</div>
         </Grid>
@@ -57,7 +76,7 @@ function OnboardingApplication() {
           <div>Date of Birth</div>
         </Grid>
         <Grid size={6}>
-          <div>{profile.dob}</div>
+          <div>{new Date(profile.dob).toLocaleDateString()}</div>
         </Grid>
         <Grid size={6}>
           <div>Address</div>
@@ -150,6 +169,13 @@ function OnboardingApplication() {
         <Grid size={12}>
           <div>Documents</div>
         </Grid>
+        {documents.map((doc) => {
+          return (
+            <Grid size={12}>
+              <div onClick={e => previewFile(doc)}>{doc}</div>
+            </Grid>
+          );
+        })}
 
         <Grid size={12}>
           <div>Application Status</div>
@@ -173,9 +199,9 @@ function OnboardingApplication() {
         </Grid>
         <Grid size={6}>
           <div>
-            <button onClick={approveApplication}>Approve</button>
-            <Input label='give feedback for reject' onChange={changeFeedback} />
-            <button onClick={rejectApplication}>Reject</button>
+            <Button onClick={approveApplication}  variant="contained" sx={{ margin: '5px', padding: '15px' }}>Approve</Button>
+            <Input label='give feedback for reject' onChange={changeFeedback}  sx={{ margin: '5px' }} />
+            <Button onClick={rejectApplication}  variant="contained" sx={{ margin: '5px', padding: '15px' }}>Reject</Button>
           </div>
         </Grid>
       </Grid>
