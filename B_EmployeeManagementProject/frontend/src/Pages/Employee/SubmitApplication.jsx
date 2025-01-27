@@ -239,7 +239,7 @@ const ApplicationForm = () => {
         <Grid item xs={12}>
           <Button variant="outlined" component="label">
             Upload Profile Picture
-            <input type="file" hidden />
+            <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"profilePicture")}} />
           </Button>
         </Grid>
       </Grid>

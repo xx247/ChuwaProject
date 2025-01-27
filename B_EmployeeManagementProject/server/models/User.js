@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   
   //personal information on application
   personalInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'PersonalInfo' },
-
+  profilePicture: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
   //personal information on information page that can be edited by user
   userInfo: { type: mongoose.Schema.Types.ObjectId, ref: 'UserInfo' },
   visaStatus: {

@@ -3,6 +3,7 @@ const Grid = require("gridfs-stream");
 const Document = require("../models/Document");
 const User = require('../models/User');
 const Application = require('../models/Application');
+//const PersonalInfo = require('../models/PersonalInfo');
 
 const conn = mongoose.createConnection(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -29,7 +30,7 @@ const uploadFile = async(req, res) => {
   //console.log("Uploaded File Metadata:", req.file);
   //console.log("Request Body:", req.body);
   const {type } = req.body;
-  console.log("Type:", type);
+  console.log("req.file:", req.file);
 
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded" });
@@ -57,9 +58,12 @@ const uploadFile = async(req, res) => {
 
     // Connect file based on its type
     if (type === "profilePicture") {
-      // Connect to profilePicture in PersonalInfoSchema
-      user.personalInfo = user.personalInfo || {};
-      user.personalInfo.profilePicture = savedDocument.filePath;
+      // Connect to PersonalInfo
+      if (!user.profilePicture) {
+        user.profilePicture = {
+        };
+      }
+      user.profilePicture = savedDocument._id;
     } else if (type.startsWith("opt")) {
       // Connect to visaStatus
       console.log("Connect to visaStatus");
