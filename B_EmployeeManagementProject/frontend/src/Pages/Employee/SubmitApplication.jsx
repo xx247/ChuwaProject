@@ -97,10 +97,16 @@ const ApplicationForm = () => {
   };
 
   const addEmergencyContact = () => {
-    setEmergencyContacts([
-      ...emergencyContacts,
-      { firstName: "", lastName: "", phone: "", email: "", relationship: "" },
-    ]);
+    setFormData((prev) => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        emergencyContacts: [
+          ...prev.personalInfo.emergencyContacts,
+          { firstName: "", lastName: "", phone: "", email: "", relationship: "" },
+        ],
+      },
+    }));
   };
 
   const [formData, setFormData] = useState({
@@ -168,10 +174,10 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateInputs()) {
-      alert("Please correct the errors before submitting.");
-      return;
-    }
+    // if (!validateInputs()) {
+    //   alert("Please correct the errors before submitting.");
+    //   return;
+    // }
 
     try {
       const response = await submitApplication(formData);
