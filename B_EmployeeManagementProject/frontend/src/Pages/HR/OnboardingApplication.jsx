@@ -40,6 +40,7 @@ function OnboardingApplication() {
   }
 
   return <>
+  <div style={{padding: '60px'}}>
   <div>Onboarding Application</div>
     <Box sx={{ width: '100%' }}>
       <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{
@@ -206,6 +207,7 @@ function OnboardingApplication() {
         </Grid>
       </Grid>
     </Box>
+    </div>
   </>;
 }
 

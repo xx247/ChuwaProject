@@ -13,28 +13,6 @@ connect.once('open', () => {
   });
 });
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2000000 }});
-
-const uploadFiles = (req, res) => {
-  const readable = new Readable();
-  const uploadStream = gridFS.openUploadStream(req.file.originalname, {
-    metadata: { mimetype: req.file.mimetype }
-  });
-
-  readable.push(req.file.buffer);
-  readable.push(null);
-  readable.pipe(uploadStream);
-
-  uploadStream.on('error', err => {
-    next(err);
-    return;
-  });
-
-  uploadStream.on('finish', () => {
-    res.send({ success: true, data: uploadStream.id });
-  });
-}
-
 const downloadFiles = (req, res) => {
   const id = req.params.id;
   try {
@@ -48,7 +26,6 @@ const downloadFiles = (req, res) => {
   }
 }
 
-router.post('/uploadFile', upload.single('file'), uploadFiles);
 router.get('/downloadFile/:id', downloadFiles);
 
 module.exports = router

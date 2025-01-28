@@ -9,8 +9,8 @@ const getOnboardingApplications = async (req, res) => {
     const status = req.params.status;
     const applications = await Application.find({ status: status });
     const applicationDetails = await Promise.all(applications.map(async (application) => {
-        const userProfile = await User.findOne({ _id: '678c66dc13cd84d4c8659e80' });
-        return { id: '678c66dc13cd84d4c8659e80', name: userProfile.name, email: userProfile.email };
+        const userProfile = await User.findOne({ _id: application.user });
+        return { id: application.user, name: userProfile.name, email: userProfile.email };
     }));
     res.status(200).json(applicationDetails);
   } catch (err) {

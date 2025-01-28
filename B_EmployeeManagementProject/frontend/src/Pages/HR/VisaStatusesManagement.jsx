@@ -28,11 +28,13 @@ function VisaStatusesManagement() {
       dispatch(searchEmployeeVisaStatuses(name));
     }
 
-    const previewFile = async (document='679306800d24796901390808') => {
-      const document_blob = await downloadFile(document);
-      const file = new Blob([document_blob], { type: "application/pdf" });
-      const url = URL.createObjectURL(file);
-      window.open(url);
+    const previewFile = async (document) => {
+      if (document) {
+        const document_blob = await downloadFile(document);
+        const file = new Blob([document_blob], { type: "application/pdf" });
+        const url = URL.createObjectURL(file);
+        window.open(url);
+      }
     }
 
     const changeDocumentStatus = (status, id) => {
@@ -46,6 +48,7 @@ function VisaStatusesManagement() {
 
     return (
       <>
+      <div style={{padding: '60px'}}>
         <div style={{margin: '15px'}}>View In-progress visa statuses</div>
         <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -72,12 +75,17 @@ function VisaStatusesManagement() {
                 <TableCell align="right">{employeeProfile.workAuthorization.visaTitle}</TableCell>
                 <TableCell align="right">{new Date(employeeProfile.workAuthorization.startDate).toLocaleDateString()}</TableCell>
                 <TableCell align="right">{new Date(employeeProfile.workAuthorization.endDate).toLocaleDateString()}</TableCell>
-                <TableCell align="right" onClick={e => previewFile(employeeProfile.recentDocument)}>{employeeProfile.recentDocument}</TableCell>
+                <TableCell align="right" onClick={e => previewFile(employeeProfile.recentDocument)}>
+                  {employeeProfile.recentDocument ? employeeProfile.recentDocument : `N/A`}
+                </TableCell>
                 <TableCell align="right">{employeeProfile.nextStep}</TableCell>
                 <TableCell align="right">
-                  <Button variant="outlined" onClick={() => changeDocumentStatus('Approved', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Approve</Button>
-                  <Input label='give feedback for reject' onChange={changeFeedback} size="small"/>
-                  <Button variant="outlined" onClick={() => changeDocumentStatus('Rejected', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Reject</Button>
+                  {employeeProfile.recentDocument &&
+                  (<>
+                    <Button variant="outlined" onClick={() => changeDocumentStatus('Approved', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Approve</Button>
+                    <Input label='give feedback for reject' onChange={changeFeedback} size="small"/>
+                    <Button variant="outlined" onClick={() => changeDocumentStatus('Rejected', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Reject</Button></>)
+                  }
                   <Button variant="outlined" onClick={() => sendNotification(employeeProfile.email, employeeProfile.nextStep)} sx={{ margin: '5px' }}>Send Notification</Button>
                 </TableCell>
               </TableRow>
@@ -121,6 +129,7 @@ function VisaStatusesManagement() {
           </TableBody>
         </Table>
       </TableContainer>
+      </div>
     </>
   );
 }
