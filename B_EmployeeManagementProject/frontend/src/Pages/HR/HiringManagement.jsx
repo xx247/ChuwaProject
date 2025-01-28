@@ -95,15 +95,15 @@ function HiringManagement() {
         <TableBody>
           {pendingOnboardingApplications.map((row) => (
             <TableRow
-              key={row.id}
+              key={row._id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.username}
               </TableCell>
               <TableCell align="right">{row.email}</TableCell>
               <TableCell align="right">
-                <Link to={"/hr/onboardingApplication/" + row.id}>
+                <Link to={"/hr/onboardingApplication/" + row._id}>
                   View Application
                 </Link>
               </TableCell>

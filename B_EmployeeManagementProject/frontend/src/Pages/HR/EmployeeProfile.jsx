@@ -113,23 +113,23 @@ function EmployeeProfile() {
             <div>Name</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.emergencyContacts?.firstName} {profile.emergencyContacts?.middleName} {profile.emergencyContacts?.lastName}</div>
+            <div>{profile.emergencyContacts?.[0]?.firstName} {profile.emergencyContacts?.[0]?.middleName} {profile.emergencyContacts?.[0]?.lastName}</div>
           </Grid>
           <Grid size={6}>
             <div>Phone</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.emergencyContacts?.phone}</div>
+            <div>{profile.emergencyContacts?.[0]?.phone}</div>
           </Grid><Grid size={6}>
             <div>Email</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.emergencyContacts?.email}</div>
+            <div>{profile.emergencyContacts?.[0]?.email}</div>
           </Grid><Grid size={6}>
             <div>Relation</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.emergencyContacts?.relationship}</div>
+            <div>{profile.emergencyContacts?.[0]?.relationship}</div>
           </Grid>
         </Grid>
       </Box>

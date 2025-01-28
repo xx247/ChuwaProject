@@ -7,12 +7,32 @@ const Application = require('../models/Application');
 const getOnboardingApplications = async (req, res) => {
   try {
     const status = req.params.status;
-    const applications = await Application.find({ status: status });
-    const applicationDetails = await Promise.all(applications.map(async (application) => {
-        const userProfile = await User.findOne({ _id: application.user });
-        return { id: application.user, name: userProfile.name, email: userProfile.email };
-    }));
-    res.status(200).json(applicationDetails);
+    const Users = await User.aggregate([
+      {
+        "$lookup": {
+          "from": "applications",
+          "localField": "onboardingApplication",
+          "foreignField": "_id",
+          "as": "application"
+        },
+      },
+      {
+        "$unwind": '$application'
+      },
+      {
+        "$match": {
+          "application.status": status
+        },
+      },
+      {
+        "$project": {
+          "_id": 1,
+          "username": 1,
+          "email": 1,
+        },
+      },
+    ]);
+    res.status(200).json(Users);
   } catch (err) {
     res.status(500).json({ message: err });
   }
