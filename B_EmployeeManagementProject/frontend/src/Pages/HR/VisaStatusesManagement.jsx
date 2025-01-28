@@ -74,16 +74,16 @@ function VisaStatusesManagement() {
                 <TableCell align="right">{employeeProfile.workAuthorization.visaTitle}</TableCell>
                 <TableCell align="right">{new Date(employeeProfile.workAuthorization.startDate).toLocaleDateString()}</TableCell>
                 <TableCell align="right">{new Date(employeeProfile.workAuthorization.endDate).toLocaleDateString()}</TableCell>
-                <TableCell align="right" onClick={e => previewFile(employeeProfile.recentDocument)}>
-                  {employeeProfile.recentDocument ? employeeProfile.recentDocument : `N/A`}
+                <TableCell align="right" onClick={e => previewFile(employeeProfile.recentDocument?.filePath)}>
+                  {employeeProfile.recentDocument ? employeeProfile.recentDocument?.filePath : `N/A`}
                 </TableCell>
                 <TableCell align="right">{employeeProfile.nextStep}</TableCell>
                 <TableCell align="right">
                   {employeeProfile.recentDocument &&
                   (<>
-                    <Button variant="outlined" onClick={() => changeDocumentStatus('Approved', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Approve</Button>
+                    <Button variant="outlined" onClick={() => changeDocumentStatus('Approved', employeeProfile.recentDocument.id)} sx={{ margin: '5px' }}>Approve</Button>
                     <Input label='give feedback for reject' onChange={changeFeedback} size="small"/>
-                    <Button variant="outlined" onClick={() => changeDocumentStatus('Rejected', employeeProfile.recentDocument)} sx={{ margin: '5px' }}>Reject</Button></>)
+                    <Button variant="outlined" onClick={() => changeDocumentStatus('Rejected', employeeProfile.recentDocument.id)} sx={{ margin: '5px' }}>Reject</Button></>)
                   }
                   <Button variant="outlined" onClick={() => sendNotification(employeeProfile.email, employeeProfile.nextStep)} sx={{ margin: '5px' }}>Send Notification</Button>
                 </TableCell>

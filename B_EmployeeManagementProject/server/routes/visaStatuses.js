@@ -45,22 +45,28 @@ const getInProgressEmployeeVisaStatuses = async (req, res) => {
       } else if (employeeProfile.visaStatus?.i20) {
         resp.nextStep = 'Review and Approve Visa Status';
         const i20 = await Document.findOne({ _id: employeeProfile.visaStatus?.i20});
-        resp.recentDocument = i20.filePath;
+        resp.recentDocument = {};
+        resp.recentDocument.filePath = i20.filePath;
+        resp.recentDocument.id = employeeProfile.visaStatus?.i20;
       } else if (employeeProfile.visaStatus?.i983) {
         resp.nextStep = 'Review Document and Submit i20';
-        resp.recentDocument = employeeProfile.visaStatus?.i983;
         const i983 = await Document.findOne({ _id: employeeProfile.visaStatus?.i983});
-        resp.recentDocument = i983.filePath;
+        resp.recentDocument = {};
+        resp.recentDocument.id = employeeProfile.visaStatus?.i983;
+        resp.recentDocument.filePath = i983.filePath;
       } else if (employeeProfile.visaStatus?.optEAD) {
         resp.nextStep = 'Review Document and Submit i983';
-        resp.recentDocument = employeeProfile.visaStatus?.optEAD;
         const optEAD = await Document.findOne({ _id: employeeProfile.visaStatus?.optEAD});
-        resp.recentDocument = optEAD.filePath;
+        resp.recentDocument = {};
+        resp.recentDocument.id = employeeProfile.visaStatus?.optEAD;
+        resp.recentDocument.filePath = optEAD.filePath;
       } else if (employeeProfile.visaStatus?.optReceipt) {
         resp.nextStep = 'Review Document and Submit opt EAD';
         resp.recentDocument = employeeProfile.visaStatus?.optReceipt;
         const optReceipt = await Document.findOne({ _id: employeeProfile.visaStatus?.optReceipt});
-        resp.recentDocument = optReceipt.filePath;
+        resp.recentDocument = {};
+        resp.recentDocument.id = employeeProfile.visaStatus?.optReceipt;
+        resp.recentDocument.filePath = optReceipt.filePath;
       } else {
         resp.nextStep = 'Submit opt receipt';
       }
@@ -154,9 +160,9 @@ const changeEmployeeVisaDocuments = async (req, res) => {
     const document = await Document.findOne({ _id: id });
     document.status = status;
     document.feedback = feedback;
-    document.save();
+    await document.save();
     res.status(200).json(document);
-  } catch {
+  } catch (err) {
     res.status(500).json({ message: err });
   }
 }
@@ -172,7 +178,7 @@ const sendNotification = async (req, res) => {
       html: `<div>Please view your uploaded file status and the next steps, the next step is: ${message}</div>`, 
     });
     res.status(200).json({});
-  } catch {
+  } catch (err) {
     res.status(500).json({ message: err });
   }
 }
