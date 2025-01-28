@@ -84,8 +84,9 @@ const getOnboardingStatus = async (req, res) => {
     }
 
     const application = user.onboardingApplication;
+    console.log(application);
 
-    if (!application) {
+    if (!application || application.status === 'NeverSubmitted') {
       // Case: Never Submitted
       return res.status(200).json({
         status: 'NeverSubmitted',

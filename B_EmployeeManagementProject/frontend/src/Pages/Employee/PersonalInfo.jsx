@@ -14,7 +14,7 @@ const PersonalInfo = () => {
     const fetchStatus = async () => {
       try {
         const response = await getApplicationStatus();
-        //console.log(response);
+        console.log(response);
         const data = await response.data;
         if (response.status === 200) {
           setStatus(data.status);
@@ -68,10 +68,8 @@ const PersonalInfo = () => {
           </Button>
         </CardContent>
       </Card>
-    </Box>
+    </Box> 
     );
-  }else{
-    navigate("/userInfo");
   }
 
 
@@ -93,7 +91,7 @@ const PersonalInfo = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleApplicationSubmission}
+            onClick={() => navigate("/userInfo")}
           >
             Go to personal information page
           </Button>

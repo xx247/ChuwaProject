@@ -1,4 +1,3 @@
-// src/pages/ApplicationForm.jsx
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -17,6 +16,9 @@ import {
   Checkbox,
   Grid,
   FormLabel,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { submitApplication } from "../../services/application";
 import { uploadFile } from "../../services/files";
@@ -31,6 +33,9 @@ const ApplicationForm = () => {
   const [visaTitle, setVisaTitle] = useState("");
   //const [fileType, setFileType] = useState("");
   const [emergencyContacts, setEmergencyContacts] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  const [errors, setErrors] = useState({});
 
   const handleWorkAuthChange = (e) => {
     const value = e.target.value;
@@ -55,7 +60,7 @@ const ApplicationForm = () => {
     });
   };
 
-  const handleFileUpload = async (e,fileType) => {
+  const handleFileUpload = async (e, fileType) => {
     const file = e.target.files[0];
     if (!file) {
       alert("Please select a file.");
@@ -65,11 +70,24 @@ const ApplicationForm = () => {
     formData.append("file", file); // The file itself
     formData.append("type", fileType); // The type of the file
 
-
     try {
       e.preventDefault();
       const response = await uploadFile(formData);
-      if (response.status === 400) {
+
+      if (response.status === 201) {
+        alert("File uploaded successfully!");
+
+        // Add the uploaded file to the list
+        setUploadedFiles((prev) => [
+          ...prev,
+          {
+            name: file.name,
+            type: fileType,
+            id: response.data.fileId || prev.length,
+          },
+        ]);
+        console.log("uploadedFiles", uploadedFiles);
+      } else if (response.status === 400) {
         alert(`Submit failed: ${response.data.message}`);
       }
     } catch (error) {
@@ -132,7 +150,6 @@ const ApplicationForm = () => {
     },
     documents: [],
   });
- 
 
   const handleChange = (e, fieldPath) => {
     console.log(e);
@@ -150,14 +167,21 @@ const ApplicationForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) {
+      alert("Please correct the errors before submitting.");
+      return;
+    }
+
     try {
-      e.preventDefault();
       const response = await submitApplication(formData);
       if (response.status === 200) {
         alert("Submit successful!");
         navigate("/personalInfo", { replace: true });
       } else if (response.status === 400) {
         alert(`Submit failed: ${response.data.message}`);
+      } else if (response.status === 500) {
+        alert("Please fill out all required fields.");
       }
     } catch (error) {
       console.log(error);
@@ -179,6 +203,40 @@ const ApplicationForm = () => {
       label: "i do not wish to answer",
     },
   ];
+
+  const validateInputs = () => {
+    const newErrors = {};
+    const { personalInfo } = formData;
+
+    // Required field validation
+    if (!personalInfo.firstName) newErrors.firstName = "First Name is required";
+    if (!personalInfo.lastName) newErrors.lastName = "Last Name is required";
+    if (!personalInfo.cellPhone) newErrors.cellPhone = "Cell Phone is required";
+    if (!personalInfo.ssn) newErrors.ssn = "SSN is required";
+    if (!personalInfo.dob) newErrors.dob = "Date of Birth is required";
+    if (!personalInfo.gender) newErrors.gender = "Gender is required";
+
+    // Address validation
+    const { building, street, city, state, zip } = personalInfo.address;
+    if (!building) newErrors.building = "Building/Apt # is required";
+    if (!street) newErrors.street = "Street Name is required";
+    if (!city) newErrors.city = "City is required";
+    if (!state) newErrors.state = "State is required";
+    if (!zip) newErrors.zip = "Zip Code is required";
+
+    // Work Authorization validation
+    const { visaTitle, citizenType, startDate, endDate } =
+      personalInfo.workAuthorization;
+    if (workAuthorization === "no" && !visaTitle)
+      newErrors.visaTitle = "Visa Title is required";
+    if (workAuthorization === "yes" && !citizenType)
+      newErrors.citizenType = "Citizen Type is required";
+    if (!startDate) newErrors.startDate = "Start Date is required";
+    if (!endDate) newErrors.endDate = "End Date is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   return (
     <Box
@@ -203,6 +261,8 @@ const ApplicationForm = () => {
             label="First Name"
             fullWidth
             required
+            error={!!errors.firstName}
+            helperText={errors.firstName}
             onChange={(e) => handleChange(e, "personalInfo.firstName")}
             value={formData.personalInfo.firstName}
           />
@@ -212,6 +272,8 @@ const ApplicationForm = () => {
             label="Last Name"
             fullWidth
             required
+            error={!!errors.lastName}
+            helperText={errors.lastName}
             onChange={(e) => handleChange(e, "personalInfo.lastName")}
             value={formData.personalInfo.lastName}
           />
@@ -235,7 +297,13 @@ const ApplicationForm = () => {
         <Grid item xs={12}>
           <Button variant="outlined" component="label">
             Upload Profile Picture
-            <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"profilePicture")}} />
+            <input
+              type="file"
+              hidden
+              onChange={(e) => {
+                handleFileUpload(e, "profilePicture");
+              }}
+            />
           </Button>
         </Grid>
       </Grid>
@@ -248,6 +316,8 @@ const ApplicationForm = () => {
             label="Building/Apt #"
             fullWidth
             required
+            error={!!errors.building}
+            helperText={errors.building}
             onChange={(e) => handleChange(e, "personalInfo.address.building")}
             value={formData.personalInfo.address.building}
           />
@@ -257,6 +327,8 @@ const ApplicationForm = () => {
             label="Street Name"
             fullWidth
             required
+            error={!!errors.street}
+            helperText={errors.street}
             onChange={(e) => handleChange(e, "personalInfo.address.street")}
             value={formData.personalInfo.address.street}
           />
@@ -266,6 +338,8 @@ const ApplicationForm = () => {
             label="City"
             fullWidth
             required
+            error={!!errors.city}
+            helperText={errors.city}
             onChange={(e) => handleChange(e, "personalInfo.address.city")}
             value={formData.personalInfo.address.city}
           />
@@ -275,6 +349,8 @@ const ApplicationForm = () => {
             label="State"
             fullWidth
             required
+            error={!!errors.state}
+            helperText={errors.state}
             onChange={(e) => handleChange(e, "personalInfo.address.state")}
             value={formData.personalInfo.address.state}
           />
@@ -284,6 +360,8 @@ const ApplicationForm = () => {
             label="Zip Code"
             fullWidth
             required
+            error={!!errors.zip}
+            helperText={errors.zip}
             onChange={(e) => handleChange(e, "personalInfo.address.zip")}
             value={formData.personalInfo.address.zip}
           />
@@ -298,6 +376,8 @@ const ApplicationForm = () => {
             label="Cell Phone"
             fullWidth
             required
+            error={!!errors.cellPhone}
+            helperText={errors.cellPhone}
             onChange={(e) => handleChange(e, "personalInfo.cellPhone")}
             value={formData.personalInfo.cellPhone}
           />
@@ -328,6 +408,8 @@ const ApplicationForm = () => {
             label="SSN"
             fullWidth
             required
+            error={!!errors.ssn}
+            helperText={errors.ssn}
             onChange={(e) => handleChange(e, "personalInfo.ssn")}
             value={formData.personalInfo.ssn}
           />
@@ -339,6 +421,8 @@ const ApplicationForm = () => {
             fullWidth
             InputLabelProps={{ shrink: true }}
             required
+            error={!!errors.dob}
+            helperText={errors.dob}
             onChange={(e) => handleChange(e, "personalInfo.dob")}
             value={formData.personalInfo.dob}
           />
@@ -349,6 +433,8 @@ const ApplicationForm = () => {
             select
             label="Gender"
             fullWidth
+            error={!!errors.gender}
+            helperText={errors.hender}
             onChange={(e) => handleChange(e, "personalInfo.gender")}
             value={formData.personalInfo.gender}
             required
@@ -382,7 +468,12 @@ const ApplicationForm = () => {
       {workAuthorization === "yes" && (
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid item xs={12}>
-            <FormControl fullWidth required>
+            <FormControl
+              fullWidth
+              required
+              error={!!errors.citizenType}
+              helperText={errors.citizenType}
+            >
               <InputLabel>Citizen type</InputLabel>
               <Select
                 id="demo-simple-select"
@@ -428,7 +519,13 @@ const ApplicationForm = () => {
             <Grid item xs={12}>
               <Button variant="outlined" component="label">
                 Upload OPT Receipt
-                <input type="file" hidden onChange={(e)=>{handleFileUpload(e,"optReceipt")}} />
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    handleFileUpload(e, "optReceipt");
+                  }}
+                />
               </Button>
             </Grid>
           )}
@@ -474,7 +571,9 @@ const ApplicationForm = () => {
           type="file"
           multiple
           hidden
-          onChange={(e) => {handleFileUpload(e,"other")}}
+          onChange={(e) => {
+            handleFileUpload(e, "other");
+          }}
         />
       </Button>
       {/* <Box>
@@ -658,6 +757,27 @@ const ApplicationForm = () => {
           </Grid>
         </Grid>
       ))}
+
+      {/* Uploaded Files Summary */}
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h6">Uploaded Files</Typography>
+        {uploadedFiles.length > 0 ? (
+          <List>
+            {uploadedFiles.map((file) => (
+              <ListItem key={file.id}>
+                <ListItemText
+                  primary={file.name}
+                  secondary={`Type: ${file.type}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography variant="body1" sx={{ mt: 2, color: "text.secondary" }}>
+            No files uploaded yet.
+          </Typography>
+        )}
+      </Box>
 
       {/* Submit Button */}
       <Box sx={{ textAlign: "center", mt: 4 }}>
