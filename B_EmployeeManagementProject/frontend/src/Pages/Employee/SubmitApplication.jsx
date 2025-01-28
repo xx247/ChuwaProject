@@ -111,6 +111,7 @@ const ApplicationForm = () => {
 
   const [formData, setFormData] = useState({
     personalInfo: {
+      email: user.email,
       firstName: "",
       lastName: "",
       middleName: "",
@@ -174,10 +175,12 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!validateInputs()) {
-    //   alert("Please correct the errors before submitting.");
-    //   return;
-    // }
+    
+    if (!validateInputs()) {
+      alert("Please correct the errors before submitting.");
+      return;
+    }
+
 
     try {
       const response = await submitApplication(formData);

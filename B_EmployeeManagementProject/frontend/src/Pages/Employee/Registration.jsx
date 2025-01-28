@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { signUp } from "../../services/authService";
 import { Link as RouterLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { getEmailRegistration, registerEmail } from "../../Services/hr";
 
 import {
   Box,
@@ -15,12 +17,29 @@ import {
 const Registration = () => {
 
   const navigate = useNavigate();
+  const params = useParams();
+  const [ userInfo, setUserInfo ] = useState(null);
 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: ""
   });
+
+  useEffect(() => {
+    if (params.token) {
+      getEmailRegistration(params.token).then((res) => {
+        if (res) {
+          setUserInfo(res);
+          registerEmail(params.token);
+        } else {
+          console.log('invalid regiser');
+        }
+      });
+    } else {
+      console.log('invalid regiser');
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -61,6 +80,7 @@ const Registration = () => {
       <Typography variant="h4" sx={{ mb: 2, color: "primary.main" }}>
         Employee Registration
       </Typography>
+      {userInfo && (`for employee: ${userInfo.name}`)}
       <Box
         component="form"
         onSubmit={handleSubmit}

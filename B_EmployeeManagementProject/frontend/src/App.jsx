@@ -1,6 +1,12 @@
-// src/App.jsx
+import EmployeeProfiles from "./Pages/HR/EmployeeProfiles";
+import VisaStatusesManagement from './Pages/HR/VisaStatusesManagement';
+import HiringManagement from './Pages/HR/HiringManagement';
+import EmployeeProfile from "./Pages/HR/EmployeeProfile";
+import OnboardingApplication from "./Pages/HR/OnboardingApplication";
+import Navigation from "./Components/HRNavigation";
+import Home from "./Pages/HR/Home";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Registration from "./Pages/Employee/Registration";
 import Login from "./Pages/Employee/Login";
 import PersonalInfo from "./Pages/Employee/PersonalInfo";
@@ -16,16 +22,22 @@ const App = () => {
   const token = useSelector((state) => state.auth.token);
   const isAuthenticated = !!token;
   console.log("isAuthenticated",isAuthenticated);
-
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <Router>
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated && (user.role === "Employee" ? <Navbar /> : <Navigation />)}
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Registration />} />
+        <Route path="/:token?" element={<Registration />} />
         <Route path="/login" element={<Login />} />
         {/* <Route path="/visaStatus" element={<VisaStatus/>} /> */}
+        <Route path="/hr/employeeProfiles" element={<EmployeeProfiles />} />
+        <Route path="/hr/visaStatus" element={<VisaStatusesManagement />} />
+        <Route path="/hr/hiringManagement" element={<HiringManagement />} />
+        <Route path="/hr/employeeProfile/:id" element={<EmployeeProfile />} />
+        <Route path="/hr/onboardingApplication/:id" element={<OnboardingApplication />} />
+        <Route path="/hr/" element={<Home />} />
         
         {/* Protected Routes */}
         <Route

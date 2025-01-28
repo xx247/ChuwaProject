@@ -71,7 +71,6 @@ const PersonalInfo = () => {
           </Button>
         </CardContent>
       </Card>
-    </Box> 
     );
   }else if (status === "Rejected") {
     return (
