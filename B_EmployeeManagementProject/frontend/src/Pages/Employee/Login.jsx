@@ -44,7 +44,11 @@ const Login = () => {
 
         //localStorage.setItem('token', response.data.token);
         console.log("redirecting to personal info page");
-        navigate('/personalInfo', {replace:true});
+        if (response.data.user.role === "Employee") {
+          navigate('/personalInfo', {replace:true});
+        } else {
+          navigate('/hr', {replace:true});
+        }
       } else if (response.status === 400) {
         alert(`Log in failed: ${response.data.message}`);
       }

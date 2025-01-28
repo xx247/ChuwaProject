@@ -105,6 +105,7 @@ const ApplicationForm = () => {
 
   const [formData, setFormData] = useState({
     personalInfo: {
+      email: user.email,
       firstName: "",
       lastName: "",
       middleName: "",

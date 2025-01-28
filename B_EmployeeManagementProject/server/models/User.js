@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
     optEAD: { type: mongoose.Schema.Types.ObjectId, ref: 'Document', default: null },
     i983: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' , default: null },
     i20: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' , default: null },
+    other: { type: mongoose.Schema.Types.ObjectId, ref: 'Document' , default: null },
   },
   createdAt: { type: Date, default: Date.now },
 });

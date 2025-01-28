@@ -50,6 +50,7 @@ const PersonalInfoSchema = new mongoose.Schema({
     email: { type: String },
     relationship: { type: String, required: true },
   }],
+  email: { type: String, required: true },
 });
 
 module.exports = mongoose.model("PersonalInfo", PersonalInfoSchema);
