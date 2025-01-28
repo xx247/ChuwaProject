@@ -77,10 +77,10 @@ function EmployeeProfile() {
             <div>Visa Status</div>
           </Grid>
           <Grid size={6}>
-            <div>{profile.citizenshipStatus}</div>
+            <div>{profile.employment?.visaTitle}</div>
           </Grid>
 
-          <Grid size={12}>
+          {/* <Grid size={12}>
             <div>Reference</div>
           </Grid>
           <Grid size={6}>
@@ -104,7 +104,7 @@ function EmployeeProfile() {
           </Grid>
           <Grid size={6}>
             <div>{profile.reference?.relationship}</div>
-          </Grid>
+          </Grid> */}
 
           <Grid size={12}>
             <div>Emergency Contact</div>

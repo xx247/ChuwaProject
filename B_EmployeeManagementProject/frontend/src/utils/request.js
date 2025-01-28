@@ -1,7 +1,7 @@
 // customized axios instance, with baseURL and authorization header
 import axios from 'axios';
 
-const baseURL = 'http://localhost:1011';
+const baseURL = 'http://localhost:5000';
 
 const request = async (url, method, data) => {
     const token = localStorage.getItem('token');

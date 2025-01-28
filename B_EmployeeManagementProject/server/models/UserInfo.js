@@ -37,7 +37,8 @@ const UserInfoSchema = new mongoose.Schema({
         email: { type: String },
         relationship: { type: String, required: true },
       }],
-    documents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }]
+    documents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Document' }],
+    email: { type: String, required: true },
 });
 
 module.exports = mongoose.model('UserInfo', UserInfoSchema);

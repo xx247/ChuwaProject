@@ -71,18 +71,14 @@ export const HREmployeeApplicationSlice = createSlice({
     onboardingApplication: {},
     emailRegistrations: [],
     inProgressEmployeeVisaStatuses: [],
-    allEmployeeVisaStatuses: {},
-    allEmployeeVisaStatusesSearched: {},
+    allEmployeeVisaStatuses: [],
+    allEmployeeVisaStatusesSearched: [],
   },
   reducers: {
     searchEmployeeVisaStatuses: (state, action) => {
-        let searchedProfiles = {};
-        Object.keys(state.allEmployeeVisaStatuses).forEach((person) => {
-          if (person.toLowerCase().includes(action.payload)) {
-              searchedProfiles[person] = state.allEmployeeVisaStatuses[person];
-          }
+        state.allEmployeeVisaStatusesSearched = state.allEmployeeVisaStatuses.filter((person) => {
+          return person.name.toLowerCase().includes(action.payload);
         })
-        state.allEmployeeVisaStatusesSearched = searchedProfiles;
       },
       searchEmployeeProfiles: (state, action) => {
         const name = action.payload;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import request from '../utils/request';
 
-const API_URL = 'http://localhost:1011';
+const API_URL = 'http://localhost:5000';
 
 export const getApplicationStatus = async () => {
     try {

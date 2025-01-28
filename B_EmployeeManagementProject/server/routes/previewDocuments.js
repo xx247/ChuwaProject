@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const mongoose = require('mongoose');
-const { Readable } = require('stream');
 
 const connect = mongoose.createConnection(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 let gridFS;

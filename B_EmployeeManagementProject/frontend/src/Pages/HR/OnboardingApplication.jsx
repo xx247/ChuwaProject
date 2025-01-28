@@ -32,7 +32,7 @@ function OnboardingApplication() {
     setFeedback(e.target.value);
   }
 
-  const previewFile = async (document='679306800d24796901390808') => {
+  const previewFile = async (document='6799166d5da6a9e6d504325a') => {
     const document_blob = await downloadFile(document);
     const file = new Blob([document_blob], { type: "application/pdf" });
     const url = URL.createObjectURL(file);

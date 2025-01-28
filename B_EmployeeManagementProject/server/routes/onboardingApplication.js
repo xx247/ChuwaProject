@@ -58,7 +58,11 @@ const getFullOnboardingApplicationForReview = async (req, res) => {
     const onboardingApplicationId = userProfile.onboardingApplication;
     const personalInfo = await PersonalInfo.findOne({ _id: personalInfoId });
     const onboardingApplication = await Application.findOne({ _id: onboardingApplicationId });
-    res.status(200).json({ personalInfo: personalInfo, documents: onboardingApplication.documents, onboardingApplication: onboardingApplication });
+    const documents = await Promise.all(onboardingApplication.documents.map(async (document) => {
+      const docPath = await Document.findOne({ _id: document });
+      return docPath.filepath;
+    }));
+    res.status(200).json({ personalInfo: personalInfo, documents: documents, onboardingApplication: onboardingApplication });
   } catch (err) {
     res.status(500).json({ message: err });
   }

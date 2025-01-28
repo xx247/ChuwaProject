@@ -32,7 +32,6 @@ const getInProgressEmployeeVisaStatuses = async (req, res) => {
       {
         "$match": { 
           "$and": [
-            { "$or": [{ "application.status": 'Pending' }, { "application.status": 'NeverSubmitted' }] },
             { "visaStatus.other": null },
             { "role": "Employee" },
           ]
@@ -45,16 +44,23 @@ const getInProgressEmployeeVisaStatuses = async (req, res) => {
         resp.nextStep = 'Submit Onboarding Application';
       } else if (employeeProfile.visaStatus?.i20) {
         resp.nextStep = 'Review and Approve Visa Status';
-        resp.recentDocument = employeeProfile.visaStatus?.i20;
+        const i20 = await Document.findOne({ _id: employeeProfile.visaStatus?.i20});
+        resp.recentDocument = i20.filePath;
       } else if (employeeProfile.visaStatus?.i983) {
         resp.nextStep = 'Review Document and Submit i20';
         resp.recentDocument = employeeProfile.visaStatus?.i983;
+        const i983 = await Document.findOne({ _id: employeeProfile.visaStatus?.i983});
+        resp.recentDocument = i983.filePath;
       } else if (employeeProfile.visaStatus?.optEAD) {
         resp.nextStep = 'Review Document and Submit i983';
         resp.recentDocument = employeeProfile.visaStatus?.optEAD;
+        const optEAD = await Document.findOne({ _id: employeeProfile.visaStatus?.optEAD});
+        resp.recentDocument = optEAD.filePath;
       } else if (employeeProfile.visaStatus?.optReceipt) {
         resp.nextStep = 'Review Document and Submit opt EAD';
         resp.recentDocument = employeeProfile.visaStatus?.optReceipt;
+        const optReceipt = await Document.findOne({ _id: employeeProfile.visaStatus?.optReceipt});
+        resp.recentDocument = optReceipt.filePath;
       } else {
         resp.nextStep = 'Submit opt receipt';
       }
@@ -73,22 +79,22 @@ const getInProgressEmployeeVisaStatuses = async (req, res) => {
 
 const getAllEmployeeVisaStatuses = async (req, res) => {
   try {
-    const Documents = await Document.aggregate([
+    const Users = await User.aggregate([
       {
         "$lookup": {
-          "from": "users",
-          "localField": "user",
+          "from": "applications",
+          "localField": "onboardingApplication",
           "foreignField": "_id",
-          "as": "user"
+          "as": "application"
         },
       },
       {
-        "$unwind": '$user'
+        "$unwind": '$application'
       },
       {
         "$lookup": {
           "from": "personalinfos",
-          "localField": "user.personalInfo",
+          "localField": "personalInfo",
           "foreignField": "_id",
           "as": "personalInfo"
         },
@@ -97,22 +103,44 @@ const getAllEmployeeVisaStatuses = async (req, res) => {
         "$unwind": '$personalInfo'
       },
       {
-        "$match": { "status": "Approved" }
-      }
+        "$match": { 
+          "$and": [
+            { "role": "Employee" },
+          ]
+        }
+      },
     ]);
-    const resp = {};
-    Documents.forEach((document) => {
-      const name = document.personalInfo.firstName + " " + document.personalInfo.lastName;
-      const workAuthorization = document.personalInfo.workAuthorization;
-      if (name in resp) {
-        resp[name].documents.push(document._id)
-      } else {
-        resp[name] = {};
-        resp[name].workAuthorization = workAuthorization;
-        resp[name].documents = [document._id];
+    const employeeProfiles = await Promise.all(Users.map(async (employeeProfile) => {
+      const resp = {};
+      resp.recentDocument = [];
+      if (employeeProfile.visaStatus?.i20) {
+        const i20 = await Document.findOne({ _id: employeeProfile.visaStatus?.i20});
+        resp.recentDocument.push(i20.filePath);
       }
-    });
-    res.status(200).json(resp);
+      if (employeeProfile.visaStatus?.i983) {
+        const i983 = await Document.findOne({ _id: employeeProfile.visaStatus?.i983});
+        resp.recentDocument.push(i983.filePath);
+      }
+      if (employeeProfile.visaStatus?.optEAD) {
+        const optEAD = await Document.findOne({ _id: employeeProfile.visaStatus?.optEAD});
+        resp.recentDocument.push(optEAD.filePath);
+      } 
+      if (employeeProfile.visaStatus?.optReceipt) {
+        const optReceipt = await Document.findOne({ _id: employeeProfile.visaStatus?.optReceipt});
+        resp.recentDocument.push(optReceipt.filePath);
+      } 
+      if (employeeProfile.visaStatus?.other) {
+        const other = await Document.findOne({ _id: employeeProfile.visaStatus?.other});
+        resp.recentDocument.push(other.filePath);
+      } 
+      resp.name = employeeProfile.personalInfo.firstName + " " + employeeProfile.personalInfo.lastName;
+      resp.workAuthorization = employeeProfile.personalInfo.workAuthorization;
+      resp._id = employeeProfile._id;
+      resp.visaStatus = employeeProfile.visaStatus;
+      resp.email = employeeProfile.email;
+      return resp;
+    }));
+    res.status(200).json(employeeProfiles);
   } catch (err) {
     res.status(500).json({ message: err });
   }

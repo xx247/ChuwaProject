@@ -1,13 +1,13 @@
 const express = require('express')
 const router = express.Router()
-const PersonalInfo = require('../models/PersonalInfo');
+const UserInfo = require('../models/UserInfo');
 
 const getEmployeeProfiles = async (req, res) => {
   try {
-    const PersonalInfos = await PersonalInfo.find({});
+    const PersonalInfos = await UserInfo.find({});
     const employeeProfiles = PersonalInfos.map((employeeProfile) => {
       return {profile_id: employeeProfile._id, firstName: employeeProfile.firstName, lastName: employeeProfile.lastName, preferredName: employeeProfile.preferredName,
-        SSN: employeeProfile.ssn, authorization: employeeProfile.workAuthorization.visaTitle,
+        SSN: employeeProfile.ssn, authorization: employeeProfile.employment.visaTitle,
       phone: employeeProfile.cellPhone, email: employeeProfile.email};
     });
     const employeeProfilesSorted = employeeProfiles.sort(function(e1, e2) {
@@ -22,7 +22,7 @@ const getEmployeeProfiles = async (req, res) => {
 const getEmployeeProfileDetailsById = async (req, res) => {
   try {
     const id = req.params.id;
-    const employeeProfile = await PersonalInfo.findOne({ _id: id });
+    const employeeProfile = await UserInfo.findOne({ _id: id });
     res.status(200).json(employeeProfile);
   } catch (err) {
     res.status(500).json({ message: err });

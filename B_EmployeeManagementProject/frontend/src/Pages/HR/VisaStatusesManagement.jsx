@@ -13,7 +13,6 @@ import Button from '@mui/material/Button';
 
 function VisaStatusesManagement() {
   const inProgressEmployeeVisaStatuses = useSelector((state) => state.HREmployeeApplication.inProgressEmployeeVisaStatuses);
-  const allEmployeeVisaStatuses = useSelector((state) => state.HREmployeeApplication.allEmployeeVisaStatuses);
   const allEmployeeVisaStatusesSearched = useSelector((state) => state.HREmployeeApplication.allEmployeeVisaStatusesSearched);
   const dispatch = useDispatch();
   const [ feedback, setFeedback ] = useState("");
@@ -108,19 +107,19 @@ function VisaStatusesManagement() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Object.keys(allEmployeeVisaStatusesSearched).map((person) => (
+            {allEmployeeVisaStatusesSearched.map((person) => (
               <TableRow
-                key={person}
+                key={person._id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {person}
+                  {person.name}
                 </TableCell>
-                <TableCell align="right">{allEmployeeVisaStatuses[person].workAuthorization.visaTitle}</TableCell>
-                <TableCell align="right">{new Date(allEmployeeVisaStatuses[person].workAuthorization.startDate).toLocaleDateString()}</TableCell>
-                <TableCell align="right">{new Date(allEmployeeVisaStatuses[person].workAuthorization.endDate).toLocaleDateString()}</TableCell>
+                <TableCell align="right">{person.workAuthorization.visaTitle}</TableCell>
+                <TableCell align="right">{new Date(person.workAuthorization.startDate).toLocaleDateString()}</TableCell>
+                <TableCell align="right">{new Date(person.workAuthorization.endDate).toLocaleDateString()}</TableCell>
                 <TableCell align="right">
-                  {allEmployeeVisaStatuses[person].documents.map((document) => {
+                  {person.recentDocument.map((document) => {
                     return <div onClick={e => previewFile(document)}>{document}</div>
                 })}
                   </TableCell>
